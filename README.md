@@ -1,7 +1,7 @@
 # FlightSimulation
 YearB: C++ Project
 
-Abstaract:
+Abstract:
 
 //to be filled once finished//
 
