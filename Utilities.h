@@ -5,26 +5,23 @@
  */
 
 /* 
- * File:   Lexer.h
+ * File:   ShuntingYard.h
  * Author: idox
  *
- * Created on December 18, 2018, 4:18 AM
+ * Created on December 18, 2018, 5:12 AM
  */
 
-#ifndef LEXER_H
-#define LEXER_H
-
-#include <string>
+#ifndef UTILITIES_H
+#define UTILITIES_H
 #include <vector>
-
+#include <string>
 using namespace std;
 
-class Lexer {
+class Utilities{
+    int operatorComparator(string, string);
 public:
-    vector<string> run();
-    vector<string> lexer(string);
-    bool isOperator(char c);
+    string shunting_yard(vector<string>);
 };
 
-#endif /* LEXER_H */
+#endif /* UTILITIES_H */
 

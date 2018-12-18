@@ -1,78 +1,48 @@
-#include <iostream>
-#include <thread>
-#include "Lexer.h"
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
+/* 
+ * File:   main.cpp
+ * Author: idox
+ *
+ * Created on December 17, 2018, 8:36 PM
+ */
+
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <stack>
+#include <queue>
+#include "Expression.h"
+#include "Number.h"
+#include "Plus.h"
+#include "Minus.h"
+#include "Mult.h"
+#include "Div.h"
+#include "Lexer.h"
+#include "Utilities.h"
 using namespace std;
 
-void func(int id) {
-    for (int i = 0; i < 100; i++) {
-        if (id == 1) {
-            cout << "hello, this is the NUMBER ONE thread" << endl;
-        } else {
-            cout << "i am not the number one..." << endl;
-        }
-    }
-}
+/*
+ * 
+ */
+int main(int argc, char** argv) {
 
-void* pthreadFunc(void* arg) {
-    int *idPtr = (int*) arg;
-    int id = *idPtr;
-    for (int i = 0; i < 100; i++) {
-        if (id == 1) {
-            cout << "hello, this is the NUMBER ONE thread" << endl;
-        } else {
-            cout << "i am not the number one..." << endl;
-        }
-    }
-
-    pthread_exit(0); // the thread which runs this func finishes.
-}
-
-
-int main() {
-
-    /**
-     * Thread try:
-     */
-//    thread th1(func, 1); // thread 1 runs with its message.
-//    thread th2(func, 2); // thread 2 runs with the other message.
-//    th1.join();
-//    th2.join();
-
-    /**
-     * Pthread try:
-     */
-//    // create 1st thread
-//     pthread_t threadID;
-//     pthread_attr_t attr;
-//     pthread_attr_init(&attr);
-//     int valueForFunc = 1;
-//     pthread_create(&threadID, &attr, pthreadFunc, &valueForFunc);
-//
-//     // create 2nd thread
-//    pthread_t thread2ID;
-//    pthread_attr_t attr2;
-//    pthread_attr_init(&attr2);
-//    int secondValue = 2;
-//    pthread_create(&thread2ID, &attr2, pthreadFunc, &secondValue);
-//
-//     pthread_join(threadID, nullptr); // wait for thread to join.
-//    pthread_join(thread2ID, nullptr); // wait for thread to join.
-
-    /**
-     * Lexer try:
-     */
-// Lexer lexer1;
-//    string str;
-//    vector<string> vec;
-//
-//    getline(cin, str); // client input will be sent to lexer function to receive string array.
-//    vec = lexer1.lexer(str);
-//    cout << vec.at(1) << endl;
-
-
-
-
-
+    cout << "Welcome to Dugma!\n";
+    Lexer lex;
+    Utilities ut;
+    cout << ut.shunting_yard(lex.run()) << "\n";
+//    vector<string> h0 = lexer.run();
+//    cout << ut.shunting_yard({"2", "+", "2"}) << endl;
+//    Utilities.shunting_yard(lex.run());
+    
+//    cout << "This is the mult " << (new Mult(new Number("2"), new Number("2")))->calculate() << "\n";
+    
     return 0;
 }
+

@@ -3,9 +3,11 @@
 //
 
 #include "Lexer.h"
+#include <iostream>
 #include <string>
 
 using namespace std;
+
 
 /**
  * This function receives a string and iterates through it, inserting
@@ -79,9 +81,18 @@ vector<string> Lexer::lexer(string str) {
     if (!currentStr.empty()) {
         stringArray.push_back(currentStr);
     }
-
+    cout << "Just got out of lexer\n";
     return stringArray;
 
+}
+
+vector<string> Lexer::run() {
+    string str;
+    vector<string> vec;
+    getline(cin, str); // client input will be sent to lexer function to receive string array.
+    vec = lexer(str);
+    cout << "Hi" << endl;
+    return vec;
 }
 /**
  * This method checks if a char is a valid operator.
