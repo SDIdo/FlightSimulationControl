@@ -1,6 +1,9 @@
 #include <iostream>
 #include <thread>
 #include "Lexer.h"
+#include "BigLexer.h"
+#include "SmallLexer.h"
+#include "DataReaderServer.h"
 
 using namespace std;
 
@@ -59,18 +62,44 @@ int main() {
 //     pthread_join(threadID, nullptr); // wait for thread to join.
 //    pthread_join(thread2ID, nullptr); // wait for thread to join.
 
+
+/**
+ * 2nd Pthread try
+ */
+
+DataReaderServer dataReaderServer;
+
+    // create 1st thread
+     pthread_t threadID;
+     pthread_attr_t attr;
+     pthread_attr_init(&attr);
+     int valueForFunc = 0;
+     pthread_create(&threadID, &attr, dataReaderServer.listen());
+
+     // create 2nd thread
+    pthread_t thread2ID;
+    pthread_attr_t attr2;
+    pthread_attr_init(&attr2);
+    int secondValue = 2;
+    pthread_create(&thread2ID, &attr2, pthreadFunc, &secondValue);
+
+     pthread_join(threadID, nullptr); // wait for thread to join.
+    pthread_join(thread2ID, nullptr); // wait for thread to join.
+
+
     /**
      * Lexer try:
      */
-// Lexer lexer1;
+
+// BigLexer lexer1;
 //    string str;
 //    vector<string> vec;
 //
 //    getline(cin, str); // client input will be sent to lexer function to receive string array.
 //    vec = lexer1.lexer(str);
-//    cout << vec.at(1) << endl;
-
-
+//    for (int i  =0; i < vec.size(); i++) {
+//        cout << vec.at(i) << "\n";
+//    }
 
 
 

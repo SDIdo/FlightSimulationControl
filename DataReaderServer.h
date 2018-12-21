@@ -7,9 +7,10 @@
 
 
 class DataReaderServer {
-
+int alt = 0;
 public:
-
+    void listen();
+    void setAlt(int);
 };
 
 

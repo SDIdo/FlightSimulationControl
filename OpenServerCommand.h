@@ -8,6 +8,7 @@
 
 #include "Command.h"
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -15,8 +16,13 @@ using namespace std;
  * This command opens a server.
  */
 class OpenServerCommand : public Command {
+    int port, hertz;
 public:
-    virtual int execute(string serverArgs[]);
+    OpenServerCommand(int port, int hertz) {
+        this->port = port;
+        this->hertz = hertz;
+    }
+    virtual int execute();
 };
 
 
