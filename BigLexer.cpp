@@ -56,6 +56,11 @@ vector<string> BigLexer::lexer(string str) {
         }
             // if the char is " (double quotes = beginning of a string) - add chars until next ".
         else if (str.at(i) == '"') {
+                        // if there was any string, puts into vector and resets current string.
+            if (!currentStr.empty()) {
+                stringArray.push_back(currentStr);
+                currentStr = "";
+            }
             currentStr += str.at(i);
             i++;
             while (i < str.length() && str.at(i) != '"') {
