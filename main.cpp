@@ -4,6 +4,8 @@
 #include "BigLexer.h"
 #include "SmallLexer.h"
 #include "DataReaderServer.h"
+#include "Parser.h"
+#include "SymbolTable.h"
 
 using namespace std;
 
@@ -17,8 +19,8 @@ void func(int id) {
     }
 }
 
-void* pthreadFunc(void* arg) {
-    int *idPtr = (int*) arg;
+void *pthreadFunc(void *arg) {
+    int *idPtr = (int *) arg;
     int id = *idPtr;
     for (int i = 0; i < 100; i++) {
         if (id == 1) {
@@ -67,24 +69,30 @@ int main() {
  * 2nd Pthread try
  */
 
-DataReaderServer dataReaderServer;
-
-    // create 1st thread
-     pthread_t threadID;
-     pthread_attr_t attr;
-     pthread_attr_init(&attr);
-     int valueForFunc = 0;
-     pthread_create(&threadID, &attr, dataReaderServer.listen());
-
-     // create 2nd thread
-    pthread_t thread2ID;
-    pthread_attr_t attr2;
-    pthread_attr_init(&attr2);
-    int secondValue = 2;
-    pthread_create(&thread2ID, &attr2, pthreadFunc, &secondValue);
-
-     pthread_join(threadID, nullptr); // wait for thread to join.
-    pthread_join(thread2ID, nullptr); // wait for thread to join.
+//DataReaderServer dataReaderServer;
+//
+//    // create 1st thread.
+//     pthread_t threadID;
+//     pthread_attr_t attr;
+//     pthread_attr_init(&attr);
+//     int valueForFunc = 1;
+//
+//    void *(DataReaderServer::*func)(void*);
+//    func = &DataReaderServer::listen;
+//
+//     pthread_create(&threadID, &attr, func, &valueForFunc);
+//
+//
+//
+//     // create 2nd thread.
+//    pthread_t thread2ID;
+//    pthread_attr_t attr2;
+//    pthread_attr_init(&attr2);
+//    int secondValue = 2;
+//    pthread_create(&thread2ID, &attr2, pthreadFunc, &secondValue);
+//
+//     pthread_join(threadID, nullptr); // wait for thread to join.
+//    pthread_join(thread2ID, nullptr); // wait for thread to join.
 
 
     /**
@@ -102,6 +110,25 @@ DataReaderServer dataReaderServer;
 //    }
 
 
+/**
+ * "REAL" main
+ * this main simulates the real main used for the flight simulator.
+ */
+
+    SymbolTable st;
+    Parser parser(&st); // parser gets a pointer to the shared symbol table.
+    BigLexer bl;
+    string clientInput;
+
+    while (true) {
+        getline(cin, clientInput);
+        // if the client wanted to print done and quit the simulator.
+        if (clientInput == "print \"done\"") {
+            cout << "done";
+            break;
+        }
+        parser.parse(bl.lexer(clientInput));
+    }
 
     return 0;
 }
