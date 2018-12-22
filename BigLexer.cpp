@@ -13,7 +13,7 @@
 vector<string> BigLexer::lexer(string str) {
     vector<string> stringArray;
     string currentStr;
-    bool validExpEnd = false, isNumBracket = false, alphaBetExpression = false;
+    bool validExpEnd = false, isNumBracket = false, alphabetChar = false, validAlphaExp = false;
     int i = 0;
 
     // iterate each char in string.
@@ -32,10 +32,13 @@ vector<string> BigLexer::lexer(string str) {
         else if (isdigit(str.at(i)) || isExpOperator(str.at(i))) {
 
             // if reached an end of alphabetic expression, adds it to the vector and creates new string.
-            if (alphaBetExpression) {
-                stringArray.push_back(currentStr);
-                currentStr = "";
-                alphaBetExpression = false;
+            if (alphabetChar || validAlphaExp) {
+                if (!(str.at(i) == '+' || str.at(i) == '-' || str.at(i) == '/' || str.at(i) == '*')) {
+                    stringArray.push_back(currentStr);
+                    currentStr = "";
+                }
+                alphabetChar = false;
+                validAlphaExp = false;
             }
 
             // if a new expression - push current string to array and start new one.
@@ -56,7 +59,7 @@ vector<string> BigLexer::lexer(string str) {
         }
             // if the char is " (double quotes = beginning of a string) - add chars until next ".
         else if (str.at(i) == '"') {
-                        // if there was any string, puts into vector and resets current string.
+            // if there was any string, puts into vector and resets current string.
             if (!currentStr.empty()) {
                 stringArray.push_back(currentStr);
                 currentStr = "";
@@ -74,15 +77,16 @@ vector<string> BigLexer::lexer(string str) {
             continue;
         }
 
-            // if the char is of the alphabet, add it and continue.
+            // if the char is of the alphabet.
         else if (isalpha(str.at(i))) {
-            if (validExpEnd) {
+            // if the current string is a valid expression, push to vector and reset string.
+            if (validExpEnd || validAlphaExp) {
                 stringArray.push_back(currentStr);
                 currentStr = "";
                 validExpEnd = false;
+                validAlphaExp = false;
             }
-
-            alphaBetExpression = true;
+            alphabetChar = true;
             currentStr += str.at(i);
             i++;
             continue;
@@ -92,11 +96,21 @@ vector<string> BigLexer::lexer(string str) {
                  str.at(i) == '>') {
             if (!currentStr.empty()) {
                 stringArray.push_back(currentStr);
+                alphabetChar = false;
+                validExpEnd = false;
+                currentStr = "";
             }
-            currentStr = "";
             currentStr += str.at(i);
             stringArray.push_back(currentStr);
             currentStr = "";
+            i++;
+            continue;
+        }
+            // if the current char is whitespace.
+        else if (isspace(str.at(i)) && alphabetChar) {
+            // if there is a valid alphabetic expression, add to vector and reset string.
+            alphabetChar = false;
+            validAlphaExp = true;
             i++;
         }
 
