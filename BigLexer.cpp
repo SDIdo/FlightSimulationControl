@@ -98,6 +98,7 @@ vector<string> BigLexer::lexer(string str) {
                 stringArray.push_back(currentStr);
                 alphabetChar = false;
                 validExpEnd = false;
+                validAlphaExp = false;
                 currentStr = "";
             }
             currentStr += str.at(i);
