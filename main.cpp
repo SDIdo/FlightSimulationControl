@@ -100,8 +100,8 @@ int main() {
         getline(cin, userInput);
         stringVector = bl.lexer(userInput);
 
-        if (userInput == "print \"done\"") {
-            cout << "done" << "\n";
+        // if the user wants to exit the process.
+        if (userInput == "exit") {
             break;
         }
             // if command is block command.
@@ -156,9 +156,6 @@ int main() {
 //
 //    sleep(18);
 //    dataSender.sendCommand("ls");
-//
-//
-//
 //
 //    // unconnected print...
 //    cout << "parallel activity" << endl;

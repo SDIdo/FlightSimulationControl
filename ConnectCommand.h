@@ -1,18 +1,13 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
  * File:   ConnectCommand.h
  * Author: idox
  *
  * Created on December 21, 2018, 8:46 PM
  */
 
-#ifndef CONNECTCOMMAND_H
-#define CONNECTCOMMAND_H
+#ifndef PROJECTPART1_CONNECTCOMMAND_H
+#define PROJECTPART1_CONNECTCOMMAND_H
+
 #include "Command.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,11 +25,10 @@ class ConnectCommand: public Command{ //OR command expression?
 //    SymbolTable* symbolTable;
     string ip;
     string port;
-    public:
-        ConnectCommand(string, string, DataSender*);
-        ~ConnectCommand() = default;
-        int virtual execute();
+public:
+    ConnectCommand(string, string, DataSender*);
+    ~ConnectCommand() = default;
+    int virtual execute();
 };
 
-#endif /* CONNECTCOMMAND_H */
-
+#endif //PROJECTPART1_CONNECTCOMMAND_H

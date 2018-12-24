@@ -10,7 +10,7 @@
 class WhileCommand : public ConditionParser {
 
 public:
-    WhileCommand(vector<string> commandStringVector, double exp1Val, double exp2Val,
+    WhileCommand(vector<string> commandStringVector, string exp1String, string exp2String,
             string condition, SymbolTable *symbolTablePtr);
     virtual int execute();
 };

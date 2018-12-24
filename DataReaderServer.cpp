@@ -1,14 +1,14 @@
-
 #include "DataReaderServer.h"
 
 
-void DataReaderServer::set(string newPort, string newHerz){
+void DataReaderServer::set(string newPort, string newHerz, SymbolTable *symbolTablePtr) {
     cout << "start to set things.. " << stoi(newPort) << ", " << newHerz << "\n";
     cout << "Before port is " << port << "\n";
     port = stoi(newPort);
     cout << "Then port is " << port << "\n";
     herz = stoi(newHerz);
     cout << "Done setting things\n";
+    this->symbolMap = symbolTablePtr;
 }
 
 bool DataReaderServer::isInBindMap(string subject) {
@@ -21,16 +21,16 @@ bool DataReaderServer::isInBindMap(string subject) {
     return true;
 }
 
-double DataReaderServer::getFromBindValues(string bindVal){
+double DataReaderServer::getFromBindValues(string bindVal) {
     cout << "[DataReader] Looking through the binds...\n";
     return strobes.at(bindVal);
 }
 
-void DataReaderServer::setSock(int newSock){
+void DataReaderServer::setSock(int newSock) {
     sockfd = newSock;
 }
 
-int DataReaderServer::getSock(){
+int DataReaderServer::getSock() {
     return sockfd;
 }
 
@@ -84,31 +84,29 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
 //    printf("Done managing the rudder which is now.. %d\n", stod(strobes.at("‫‪/controls/flight/rudder‬‬")));
 }
 
-void DataReaderServer::updateBindedValues(){
+void DataReaderServer::updateBindedValues() {
     cout << "[Update binded values] Welcome to check and update\n";
-    for (std::map<string, string>::iterator it = bindTable.begin(); it != bindTable.end(); ++it){
+    for (std::map<string, string>::iterator it = bindTable.begin(); it != bindTable.end(); ++it) {
         std::cout << it->first << " => " << it->second << '\n';
-        if (strobes[bindTable[it->first]] != 0){
+        if (strobes[bindTable[it->first]] != 0) {
             cout << "Ok! there's a bineded value! Update it's symbolTable\n which is: " << it->first << endl;
-            symbolMap->set(it->first, strobes[bindTable[it->first]);
-        }
-        else{
+            symbolMap->set(it->first, strobes[bindTable[it->first]]);
+        } else {
             strobes.erase(bindTable[it->first]);
             bindTable.erase(it->first);
+            cout << "HE WANTED TO ERASE ME" << it->first << endl;
         }
     }
-
 }
 
-void DataReaderServer::setBind(string var, string address){
+void DataReaderServer::setBind(string var, string address) {
     cout << "New var is binded as such: " << var << " = " << address << "\n";
-    bindTable[var] = address;
+    this->bindTable[var] = address;
 }
-void * DataReaderServer::open() {
+
+void *DataReaderServer::open() {
     int sockfd, newsockfd, portno, clilen;
-    char buffer[256];
     struct sockaddr_in serv_addr, cli_addr;
-    int n;
 
     /* First call to socket() function */
     setSock(socket(AF_INET, SOCK_STREAM, 0));
@@ -119,7 +117,7 @@ void * DataReaderServer::open() {
     }
 
     /* Initialize socket structure */
-    bzero((char *) &serv_addr, sizeof (serv_addr));
+    bzero((char *) &serv_addr, sizeof(serv_addr));
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
@@ -127,7 +125,7 @@ void * DataReaderServer::open() {
     serv_addr.sin_port = htons(port);
 
     /* Now bind the host address using bind() call.*/
-    if (bind(getSock(), (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
+    if (bind(getSock(), (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         perror("ERROR on binding");
         exit(1);
     }
@@ -137,20 +135,29 @@ void * DataReaderServer::open() {
      */
 
     listen(getSock(), 5);
-    clilen = sizeof (cli_addr);
+    clilen = sizeof(cli_addr);
     printf("Waiting for a client\n");
     /* Accept actual connection from the client */
-    newsockfd = accept(getSock(), (struct sockaddr *) &cli_addr, (socklen_t*) & clilen);
-
-    if (newsockfd < 0) {
+    this->newSockFd = accept(getSock(), (struct sockaddr *) &cli_addr, (socklen_t *) &clilen);
+    printf("socket was created!\n");
+    if (this->newSockFd < 0) {
         perror("ERROR on accept");
         exit(1);
     }
     printf("Ever Listening..\n");       //SCAT! here you get array of information that updates the map..
-    /* If connection is established then start communicating */
+    /* If connection is established then start communicating on a pthread */
+
+    pthread_t t1ID;
+    pthread_create(&t1ID, nullptr, &DataReaderServer::runServer, nullptr);
+}
+
+
+void *DataReaderServer::runServerFunc(void *) {
+    int n;
+    char buffer[256];
     while (true) {              //SCAT here
         bzero(buffer, 256);
-        n = read(newsockfd, buffer, 255);
+        n = read(this->newSockFd, buffer, 255);
 
         if (n < 0) {
             perror("ERROR reading from socket");
@@ -169,7 +176,7 @@ void * DataReaderServer::open() {
 //        while()
 //        strobes[]
 
-        /* Write a response to the client */
+/* Write a response to the client */
 //        n = write(newsockfd, "I got your message\n", 19);
 
         if (n < 0) {
@@ -178,6 +185,6 @@ void * DataReaderServer::open() {
         }
     }
 }
-void DataReaderServer::close(){
+void DataReaderServer::close() {
 //    close();      //SCAT no close but hightly needed!
 }

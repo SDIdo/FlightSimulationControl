@@ -63,6 +63,8 @@ vector<string> BigLexer::lexer(string str) {
             if (!currentStr.empty()) {
                 stringArray.push_back(currentStr);
                 currentStr = "";
+                validExpEnd = false;
+                validAlphaExp = false;
             }
             currentStr += str.at(i);
             i++;

@@ -11,12 +11,14 @@
 #include "SmallLexer.h"
 #include "BigLexer.h"
 #include "SymbolTable.h"
+#include "Utilities.h"
 
 class BlockParser {
     CommandMap commandMap;
     SymbolTable *symbolTable;
     SmallLexer smallLexer;
     BigLexer bigLexer;
+    Utilities util;
 public:
     void parse(vector<string> stringVector);
     BlockParser(SymbolTable* symbolTable);

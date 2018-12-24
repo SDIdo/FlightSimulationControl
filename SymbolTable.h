@@ -37,7 +37,7 @@ public:
      * @param symbolValue value of the symbol.
      */
     void set(string const symbolString, double const symbolValue) {
-        this->symbols.insert(pair<string, double>(symbolString, symbolValue));
+        this->symbols[symbolString] = symbolValue;
     }
 
 };

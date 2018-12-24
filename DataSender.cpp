@@ -1,8 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+//
+// Created by roy on 12/23/18.
+//
 
 #include "DataSender.h"
 
@@ -20,7 +18,7 @@ int DataSender::getSock() {
 }
 
 int DataSender::openPipe() {
-    cout << "[open pipe properties] ip = " << ip << " and port = " << port << "\n"; 
+    cout << "[open pipe properties] ip = " << ip << " and port = " << port << "\n";
     int portno;
     struct sockaddr_in serv_addr;
     struct hostent *server;
@@ -51,13 +49,13 @@ int DataSender::openPipe() {
         exit(0);
     }
 
-    bzero((char *) &serv_addr, sizeof (serv_addr));
+    bzero((char *) &serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
     serv_addr.sin_port = htons(portno);
 
     /* Now connect to the server */
-    if (connect(getSock(), (struct sockaddr*) &serv_addr, sizeof (serv_addr)) < 0) {
+    if (connect(getSock(), (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         perror("ERROR connecting");
         exit(1);
     }
@@ -75,8 +73,9 @@ void DataSender::sendCommand(const char buffer[256]) {
     bzero(myBuffer, 256);
     memcpy(myBuffer, buffer, 256);
     int n = 0;
+    char setString[4] = {'s', 'e', 't', ' '};
+    strcat(setString, myBuffer);
     printf("Current msg to send: %s\n", myBuffer);
-
     strcat(myBuffer, "\r\n");
 
     /* Send message to the server */

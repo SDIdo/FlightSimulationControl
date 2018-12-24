@@ -5,11 +5,11 @@
 #include "IfCommand.h"
 #include "LineParser.h"
 
-IfCommand::IfCommand(vector<string> commandStringVector, double exp1Val, double exp2Val,
+IfCommand::IfCommand(vector<string> commandStringVector, string exp1String, string exp2String,
         string condition, SymbolTable *symbolTablePtr){
     this->commandStringVector = commandStringVector;
-    this->exp1Val = exp1Val;
-    this->exp2Val = exp2Val;
+    this->exp1String = exp1String;
+    this->exp2String = exp2String;
     this->condition = condition;
     this->symbolTablePtr = symbolTablePtr;
 }

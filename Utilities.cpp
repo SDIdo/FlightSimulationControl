@@ -1,8 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+//
+// Created by roy on 12/24/18.
+//
 
 #include "Utilities.h"
 #include "BinaryExpression.h"
@@ -65,20 +63,20 @@ string Utilities::shuntingYard(vector<string> instream) {
                 values_stack.pop();
 
                 cout << "Show me two operands.. " << left_val << " | " << right_val << "\n";
-                
+
                 BinaryExpression* currentOperation = operators[operators_stack.top()];
                 currentOperation->set(new Number(left_val), new Number(right_val));
-                
+
                 cout << "Passed the set\n";
-                
+
                 values_stack.push(to_string(currentOperation->calculate()));
-                
+
                 cout << "Managed to calculate? " << values_stack.top() << "\n";
-                
+
                 cout << "Show me current sol in values stack : " << values_stack.top() << "\n";
                 operators_stack.pop();
                 cout << "Managed to pop\n";
-                
+
             }
             cout << "only way to get out of this loop it by left parenthesis\n";
             operators_stack.pop();
@@ -105,16 +103,16 @@ string Utilities::shuntingYard(vector<string> instream) {
         cout << "Show me two operands.. " << left_val << " | " << right_val << "\n";
         cout << "Show me the operator " << operators_stack.top() << "\n";
         BinaryExpression* currentOperation = operators.at(operators_stack.top());
-        
+
         cout << "Passed\n";
         Number left(left_val);
         Number right(right_val);
         currentOperation->set(&left, &right);
-        
+
         cout << "Passed\n";
-        
+
         currentOperation->calculate();
-        
+
         cout << "Passo!X3\n";
         values_stack.push(to_string(currentOperation->calculate()));
         cout << "Passed\n";

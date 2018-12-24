@@ -9,17 +9,19 @@
  * @return boolean - is condition met.
  */
 bool ConditionParser::conditionIsMet() {
+    double exp1Val = stod(this->util.shuntingYard(this->smallLexer.lexer(this->exp1String)));
+    double exp2Val = stod(this->util.shuntingYard(this->smallLexer.lexer(this->exp2String)));
     if (this->condition == "<") {
-        return this->exp1Val < this->exp2Val;
+        return exp1Val < exp2Val;
     } else if (this->condition == ">") {
-        return this->exp1Val > this->exp2Val;
+        return exp1Val > exp2Val;
     } else if (this->condition == "==") {
-        return this->exp1Val == this->exp2Val;
+        return exp1Val == exp2Val;
     } else if (this->condition == "!=") {
-        return this->exp1Val != this->exp2Val;
+        return exp1Val != exp2Val;
     } else if (this->condition == "<=") {
-        return this->exp1Val <= this->exp2Val;
+        return exp1Val <= exp2Val;
     } else if (this->condition == ">=") {
-        return this->exp1Val >= this->exp2Val;
+        return exp1Val >= exp2Val;
     }
 }

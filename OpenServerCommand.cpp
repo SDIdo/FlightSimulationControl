@@ -8,10 +8,12 @@
 
 using namespace std;
 
-OpenServerCommand::OpenServerCommand(string newPort, string newHerz, DataReaderServer* newReader) {
+OpenServerCommand::OpenServerCommand(string newPort, string newHerz,
+                                     DataReaderServer *newReader, SymbolTable *symbolTable) {
     port = newPort;
     herz = newHerz;
     dataReaderServer = newReader;
+    this->symbolTable = symbolTable;
 }
 
 int OpenServerCommand::execute() {
@@ -21,11 +23,12 @@ int OpenServerCommand::execute() {
         return 0;
     }
     cout << "[Opening a server] We are here" << "\n";
-    
-    dataReaderServer->set(port, herz);
+
+    dataReaderServer->set(port, herz, this->symbolTable);
     cout << "[Opening a server] Done initializing\n";
+
     dataReaderServer->open();
-    
+
     return 3; // number of needed to move the lexer
 
 }

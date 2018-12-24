@@ -8,11 +8,14 @@
 #include <vector>
 #include "Command.h"
 #include "SymbolTable.h"
+#include "Utilities.h"
+#include "SmallLexer.h"
 
 class ConditionParser : public Command {
+    Utilities util;
+    SmallLexer smallLexer;
 public:
-    string condition;
-    double exp1Val, exp2Val;
+    string condition, exp1String, exp2String;
     vector<string> commandStringVector;
     SymbolTable *symbolTablePtr;
     virtual int execute() = 0;

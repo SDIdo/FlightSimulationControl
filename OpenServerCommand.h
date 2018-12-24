@@ -19,9 +19,10 @@ using namespace std;
 class OpenServerCommand : public Command {
     string port;
     string herz;
-    DataReaderServer* dataReaderServer;
+    DataReaderServer *dataReaderServer;
+    SymbolTable *symbolTable;
 public:
-    OpenServerCommand(string, string, DataReaderServer*);
+    OpenServerCommand(string, string, DataReaderServer *, SymbolTable*);
     ~OpenServerCommand() = default;
     virtual int execute();
 };
