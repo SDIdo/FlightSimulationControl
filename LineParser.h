@@ -20,7 +20,7 @@ class LineParser {
     SymbolTable* symbolTable;
     SmallLexer smallLexer;
 public:
-    void parse(vector<string> stringVector);
+    int parse(vector<string> stringVector, int startIndex);
     LineParser(SymbolTable* symbolTable);
 };
 

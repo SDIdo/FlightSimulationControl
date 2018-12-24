@@ -2,13 +2,13 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
-#include <algorithm>
 #include "BigLexer.h"
 #include "SmallLexer.h"
 #include "DataReaderServer.h"
 #include "LineParser.h"
 #include "SymbolTable.h"
 #include "BlockParser.h"
+#include "DataSender.h"
 
 using namespace std;
 
@@ -67,8 +67,8 @@ int main() {
  * this try is trying to use thread on a class method.
  */
 
-    DataReaderServer dataReaderServer;
-    dataReaderServer.threadListen();
+//    DataReaderServer dataReaderServer;
+//    dataReaderServer.threadListen();
 
     /**
      * Lexer try:
@@ -85,56 +85,86 @@ int main() {
 
 
 /**
- * "REAL" main
+ * "REAL" main for sending commands.
  * this main simulates the real main used for the flight simulator.
  */
 
-//    SymbolTable st;
-//    LineParser lineParser(&st); // parser gets a pointer to the shared symbol table.
-//    BlockParser blockParser(&st); // block parser gets a pointer to the shared symbol table.
-//    BigLexer bl;
-//    string userInput;
-//    vector<string> stringVector;
+    SymbolTable st;
+    LineParser lineParser(&st); // parser gets a pointer to the shared symbol table.
+    BlockParser blockParser(&st); // block parser gets a pointer to the shared symbol table.
+    BigLexer bl;
+    string userInput;
+    vector<string> stringVector;
+
+    while (true) {
+        getline(cin, userInput);
+        stringVector = bl.lexer(userInput);
+
+        if (userInput == "print \"done\"") {
+            cout << "done" << "\n";
+            break;
+        }
+            // if command is block command.
+        else if (stringVector.at(0) == "while" || stringVector.at(0) == "if") {
+            string blockString = userInput.substr(0, userInput.length() - 2); // exclude curly bracket.
+            // get all of the user input until the end of the if/while statement.
+            int openedBrackets = 1;
+            while (openedBrackets != 0) {
+                getline(cin, userInput);
+                if (userInput.back() == '}') {
+                    openedBrackets -= 1;
+                    continue;
+                } else if (userInput.back() == '{') {
+                    openedBrackets += 1;
+                }
+                blockString += userInput;
+            }
+
+            stringVector = bl.lexer(blockString);
+            blockParser.parse(stringVector);
+        }
+            // command was a line command.
+        else {
+            lineParser.parse(bl.lexer(userInput), 0);
+        }
+    }
+
+/**
+ * Test with Ido (worked open server).
+ *
+ * And now also the client can connect to the flight simulator with it's own pthread.
+ * After it connects it can send commands to the simulator.
+ */
+
+//    DataReaderServer dataReaderServer;
+//    pthread_t t1ID;
+//    pthread_create(&t1ID, NULL, &DataReaderServer::runOpen, &dataReaderServer);
 //
-//    while (true) {
-//        getline(cin, userInput);
-//        stringVector = bl.lexer(userInput);
+//    dataReaderServer.set("5402", "10");
 //
-//        if (userInput == "print \"done\"") {
-//            cout << "done" << "\n";
-//            break;
-//        }
-//            // if command is block command.
-//        else if (stringVector.at(0) == "while" || stringVector.at(0) == "if") {
-//            string blockString = userInput;
-//            // get all of the user input until the end of the if/while statement.
-//            int openedBrackets = 1;
-//            while (openedBrackets != 0) {
-//                if (userInput.back() == '}') {
-//                    openedBrackets -= 1;
-//                } else if (userInput.back() == '{') {
-//                    openedBrackets += 1;
-//                }
-//                getline(cin, userInput);
-//                blockString += userInput;
-//            }
-//            stringVector = bl.lexer(blockString);
-//            blockParser.parse(stringVector);
-//        }
-//            // command was a line command.
-//        else {
-//            lineParser.parse(bl.lexer(userInput));
-//        }
-//    }
+//    // unconnected print...
+//    cout << "parallel activity" << endl;
 //
-//    vector<string> vec = {"a", "b"};
-//    vector<string> vec2 = {"c", "d"};
-//    vector<string> newVec(vec.size() + vec2.size());
-//    merge(vec.begin(), vec.end(), vec2.begin(), vec2.end(), newVec.begin());
-//    cout << "HEY" << endl;
-//    for (int i = 0; i < 4; i++) {
-//        cout << newVec.at(i) << endl;
-//    }
+//    DataSender dataSender;
+//    pthread_t t2ID;
+//    pthread_create(&t2ID, NULL, &DataReaderServer::runOpen, &dataSender);
+//
+//    sleep(18);
+//
+//    dataSender.set("127.0.0.1", "5401");
+//    dataSender.openPipe();
+//
+//    sleep(18);
+//    dataSender.sendCommand("ls");
+//
+//
+//
+//
+//    // unconnected print...
+//    cout << "parallel activity" << endl;
+//
+//    pthread_join(t1ID, nullptr); // wait for thread to join.
+//    pthread_join(t2ID, nullptr); // wait for thread to join.
 
     return 0;
 }

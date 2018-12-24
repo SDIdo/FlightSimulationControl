@@ -3,9 +3,10 @@
 //
 
 #include <iostream>
-#include <chrono>
 #include "LineParser.h"
 #include "IfCommand.h"
+#include "SleepCommand.h"
+#include "PrintCommand.h"
 
 /**
  * Constructor of LineParser, used for parsing single line.
@@ -15,9 +16,10 @@ LineParser::LineParser(SymbolTable *symbolTable) {
     this->symbolTable = symbolTable;
 }
 
-void LineParser::parse(vector<string> stringVector) {
-    string commandString = stringVector.at(0); // first string will represent the first command in line.
+int LineParser::parse(vector<string> stringVector, int startIndex) {
+    string commandString = stringVector.at(startIndex); // first string will represent the first command in line.
     Commands command = commandMap.getCommand(commandString);
+    int indexJumpValue = 0;
 
     // for each command option - execute the fitting operation:
     switch (command) {
@@ -41,26 +43,32 @@ void LineParser::parse(vector<string> stringVector) {
             // input the next value to the previous value.
             break;
 
-        case Print :
-            // if the next string starts with quotes - print it.
-            if (stringVector.at(1).at(0) == '"') {
-                cout << stringVector.at(1) << "\n";
+        case Print : {
+            string printString;
+            // if the next string starts with quotes - string will be the string inside quotes.
+            if (stringVector.at(startIndex + 1).at(0) == '"') {
+                printString = stringVector.at(startIndex + 1).substr(1, stringVector.at(startIndex + 1).length() - 2);
             }
-                // else, get the string value from symbol map and print it.
+                // else, get the string value from symbol map.
             else {
-                cout << to_string(this->symbolTable->get(stringVector.at(1))) << "\n";
+                printString = to_string(this->symbolTable->get(stringVector.at(1)));
             }
+            PrintCommand printCommand(printString);
+            indexJumpValue = printCommand.execute();
             break;
+        }
 
-        case Sleep :
+        case Sleep : {
             // sleeps for the given amount of time.
-//            double sleepTime = shuntingYard(stringVector.at(1));
-//            chrono::seconds(sleepTime);
+//            SleepCommand sleepCommand(shuntingYard(stringVector.at(startIndex + 1)));
+//            indexJumpValue = sleepCommand.execute();
             break;
+        }
 
             // if the command is invalid command, throw error message.
         default:
             throw "Non valid command";
     }
+    return indexJumpValue;
 
 }

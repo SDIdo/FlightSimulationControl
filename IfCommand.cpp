@@ -23,10 +23,10 @@ int IfCommand::execute() {
     int i = 0;
     int commandLength;
     LineParser lineParser(this->symbolTablePtr);
-    while (i < commandStringVector.size()) {
-        Command command = 1st in array;
-        commandLength = command.execute();
-        i += command.execute();
+    // parser executes each line command. does not work with nested loops...
+    while (i < this->commandStringVector.size()) {
+        commandLength = lineParser.parse(this->commandStringVector, i);
+        i += commandLength;
     }
     return i + 1;
 }
