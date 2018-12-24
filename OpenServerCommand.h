@@ -9,6 +9,7 @@
 #include "Command.h"
 #include <string>
 #include <vector>
+#include "DataReaderServer.h"
 
 using namespace std;
 
@@ -16,12 +17,12 @@ using namespace std;
  * This command opens a server.
  */
 class OpenServerCommand : public Command {
-    int port, hertz;
+    string port;
+    string herz;
+    DataReaderServer* dataReaderServer;
 public:
-    OpenServerCommand(int port, int hertz) {
-        this->port = port;
-        this->hertz = hertz;
-    }
+    OpenServerCommand(string, string, DataReaderServer*);
+    ~OpenServerCommand() = default;
     virtual int execute();
 };
 

@@ -8,15 +8,24 @@
 
 using namespace std;
 
-int OpenServerCommand::execute() {
+OpenServerCommand::OpenServerCommand(string newPort, string newHerz, DataReaderServer* newReader) {
+    port = newPort;
+    herz = newHerz;
+    dataReaderServer = newReader;
+}
 
+int OpenServerCommand::execute() {
     // check if valid port.
-    if (this->port < 0 || this->port > 65535) {
+    if (stod(port) < 0 || stod(port) > 65535) {
         cout << "non-valid port" << endl;
         return 0;
     }
-    // if valid port and rate - make server:
-
-//    DataReaderServer
+    cout << "[Opening a server] We are here" << "\n";
+    
+    dataReaderServer->set(port, herz);
+    cout << "[Opening a server] Done initializing\n";
+    dataReaderServer->open();
+    
+    return 3; // number of needed to move the lexer
 
 }
