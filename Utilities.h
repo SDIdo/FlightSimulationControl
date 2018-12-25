@@ -1,13 +1,18 @@
 /*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/* 
  * File:   Utilities.h
  * Author: idox
  *
  * Created on December 20, 2018, 5:05 PM
  */
 
-#ifndef PROJECTPART1_UTILITIES_H
-#define PROJECTPART1_UTILITIES_H
-
+#ifndef UTILITIES_H
+#define UTILITIES_H
 #include "SymbolTable.h"
 #include <map>
 #include "BinaryExpression.h"
@@ -26,4 +31,4 @@ public:
     int precedence(string);
 };
 
-#endif //PROJECTPART1_UTILITIES_H
+#endif /* UTILITIES_H */
