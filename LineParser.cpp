@@ -34,7 +34,7 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
             string herz = util.shuntingYard(smallLexer.lexer(stringVector.at(2)));
             OpenServerCommand openServer(port, herz, &this->dataReaderServer, this->symbolTable);
             cout << "So let's see what's about to be opened " << port << ", " << herz << "\n";
-            openServer.execute();
+            indexJumpValue = openServer.execute();
             // create port and hertz, and open data server.
 //            openServer.execute(stringVector.at(1), stringVector.at(2));
             break;
@@ -43,7 +43,7 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
         case Connect : { //Is Complete.
             ConnectCommand connect(stringVector.at(1), util.shuntingYard(smallLexer.lexer(stringVector.at(2))),
                                    &this->dataSender);
-            connect.execute();
+            indexJumpValue = connect.execute();
             break;
         }
 
@@ -57,48 +57,34 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
             // from the likes of var x = 8
             cout << "Here with " << stringVector.at(3) << "\n";
 
+            // if the command was bind:
             if ((stringVector.at(2) == "=") && (stringVector.at(3) == "bind")) {
-//                string expressionAfterEquation = ut.shuntingYard(smallLexer.lexer(stringVector.at(4)));
                 cout << "Time to update bind map!\n";
                 this->dataReaderServer.setBind(stringVector.at(1), stringVector.at(4));
-            } else {
-                string expressionAfterEquation = util.shuntingYard(smallLexer.lexer(stringVector.at(3)));
-                char charAfterEquation = expressionAfterEquation.at(0);
-                if (stringVector.at(2) == "=" && isdigit(charAfterEquation)) {
-                    cout << "Detected var x = " << expressionAfterEquation << "\n";
-
-                    cout << "Now check whether it's binded with the simulator..\n";
-
-                    if (this->dataReaderServer.isInBindMap(stringVector.at(1))) {
-                        cout << "Hmm so this x is binded!\n";
-                        string address = this->dataReaderServer.getBindAddress(stringVector.at(1));
-                        cout << address << endl; // PRINT
-                        string update = " " + stringVector.at(3);
-                        string updatedAddress = address + update;
-
-                        char toSend[256];
-                        strcpy(toSend, updatedAddress.c_str());
-
-                        this->dataSender.sendCommand(toSend);
-                    } else {
-                        symbolTable->set(stringVector.at(1), stod(expressionAfterEquation));
-                        cout << "Now let's see.. " << symbolTable->get("x") << "\n";
-                    }
-                }
+                indexJumpValue = 5;
             }
-//            symbolTable->set()
-// put value in symbol table (Or if BIND, then bind with the relative folder).
+                // else, the variable is a local variable, and not binded var:
+            else {
+                string expressionAfterEquation = util.shuntingYard(smallLexer.lexer(stringVector.at(3)));
+                symbolTable->set(stringVector.at(1), stod(expressionAfterEquation));
+                cout << "Now let's see.. " << symbolTable->get(stringVector.at(1)) << "\n";
+                indexJumpValue = 4;
+            }
             break;
         }
 
         case Equal : {
             cout << "Here with " << stringVector.at(0) << "=" << stringVector.at(2) << "\n";
             //SCAT - have to initialize dataReader first?
-//            if (this-){
             if (this->dataReaderServer.isInBindMap(stringVector.at(0))) {  //SCAT like it is not there.. seg?
-                cout << "[Line parser] Yep it is there. Updating server\n";
-//                    this->dataReaderServer.setBind(stringVector.at(0), stringVector.at(2)); //SCAT like no expressions yet
-                string address = stringVector.at(this->dataReaderServer.getFromBindValues(stringVector.at(0)));
+                cout << "[Line parser] Yep it is binded. Updating server\n";
+                string address = this->dataReaderServer.getBindAddress(stringVector.at(0));
+
+                symbolTable->set(address,
+                                 stod(this->util.shuntingYard(this->smallLexer.lexer(stringVector.at(2)))));
+
+                address = address.substr(1, address.length() - 2); // cut the qoutes from the address.
+
                 cout << "After te search\n";
                 string update = " " + stringVector.at(2);
                 string updatedAddress = address + update;
@@ -107,14 +93,12 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
                 strcpy(toSend, updatedAddress.c_str());
 
                 this->dataSender.sendCommand(toSend);
-            }
-//            }
-            else {
+            } else {
                 cout << "[Line Parser] No need to update in server that's a local var\n";
-                symbolTable->set(stringVector.at(0), stod(stringVector.at(2)));
+                symbolTable->set(stringVector.at(0), stod(this->
+                        util.shuntingYard(this->smallLexer.lexer(stringVector.at(2)))));
             }
-            cout << "Just want to see.. " << symbolTable->get("x");
-// input the next value to the previous value.
+            indexJumpValue = 3;
             break;
         }
 
@@ -127,7 +111,14 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
             }
                 // else, get the string value from symbol map.
             else {
-                printString = to_string(this->symbolTable->get(stringVector.at(1)));
+                if (this->symbolTable->isInMap(stringVector.at(1))) {
+                    printString = to_string(this->symbolTable->get(stringVector.at(1)));
+                } else if (this->symbolTable->isInMap(this->dataReaderServer.getBindAddress(stringVector.at(1)))) {
+                    printString = to_string(
+                            this->symbolTable->get(this->dataReaderServer.getBindAddress(stringVector.at(1))));
+                } else {
+                    cout << "Var not in symbol map" << "\n";
+                }
             }
             PrintCommand printCommand(printString);
             indexJumpValue = printCommand.execute();
@@ -146,6 +137,8 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
         default:
             throw "Non valid command";
     }
-    return indexJumpValue;
+
+    return
+            indexJumpValue;
 
 }

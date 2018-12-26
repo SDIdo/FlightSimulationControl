@@ -21,14 +21,16 @@ public:
      * @return double value of the given string.
      */
     double get(string const symbolString) const {
-        // if the key was not found in map, returns invalid command.
-        if (symbols.find(symbolString) == symbols.end()) {
-            return -1;
+        return symbols.at(symbolString);
+    }
+
+    bool isInMap(string varName) {
+        for (std::map<string, double>::iterator it = symbols.begin(); it != symbols.end(); ++it) {
+            if (it->first == varName) {
+                return true;
+            }
         }
-            // else, returns the fitting command.
-        else {
-            return symbols.at(symbolString);
-        }
+        return false;
     }
 
     /**
@@ -36,7 +38,7 @@ public:
      * @param symbolString string of the given symbol.
      * @param symbolValue value of the symbol.
      */
-    void set(string const symbolString, double const symbolValue) {
+    void set(string symbolString, double symbolValue) {
         this->symbols[symbolString] = symbolValue;
     }
 

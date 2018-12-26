@@ -72,13 +72,13 @@ void DataSender::sendCommand(const char buffer[256]) {
     bzero(myBuffer, 256);
     memcpy(myBuffer, buffer, 256);
     int n = 0;
-    char setString[4] = {'s', 'e', 't', ' '};
+    char setString[256] = {'s', 'e', 't', ' '};
     strcat(setString, myBuffer);
-    printf("Current msg to send: %s\n", myBuffer);
-    strcat(myBuffer, "\r\n");
+    printf("Current msg to send: %s\n", setString);
+    strcat(setString, "\r\n");
 
     /* Send message to the server */
-    n = write(getSock(), myBuffer, strlen(myBuffer));
+    n = write(getSock(), setString, strlen(setString));
 
     if (n < 0) {
         perror("ERROR writing to socket");

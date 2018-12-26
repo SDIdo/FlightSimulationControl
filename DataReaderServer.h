@@ -37,6 +37,7 @@ public:
     void set(string, string, SymbolTable*);
     bool isInBindMap(string);
     double getFromBindValues(string);
+    void setStrobe(string bindVarName, string address);
     void takeSamplesToTable(string);
     void setBind(string, string);
     string getBindAddress(string varName);

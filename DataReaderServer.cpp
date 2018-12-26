@@ -13,7 +13,6 @@ void DataReaderServer::set(string newPort, string newHerz, SymbolTable *symbolTa
 
 bool DataReaderServer::isInBindMap(string subject) {
     cout << "[DataReaderServer] Looking through bind map\n";
-//    cout << bindTable << endl;
     if (bindTable.find(subject) == bindTable.end()) {
         cout << "Wasn't found!\n";
         return false;
@@ -21,13 +20,17 @@ bool DataReaderServer::isInBindMap(string subject) {
     return true;
 }
 
-double DataReaderServer::getFromBindValues(string bindVal) {
+double DataReaderServer::getFromBindValues(string bindVarName) {
     cout << "[DataReader] Looking through the binds...\n";
-    return strobes.at(bindVal);
+    return strobes.at(getBindAddress(bindVarName));
+}
+
+void DataReaderServer::setStrobe(string bindVarName, string address) {
+    strobes[bindVarName] = 0;
 }
 
 string DataReaderServer::getBindAddress(string varName) {
-    cout << "[DataReader] Looking through the binds...\n";
+    cout << "[DataReader] Looking for a bind address\n";
     return bindTable.at(varName);
 }
 
@@ -52,9 +55,6 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
     }
     sol.push_back((parseMe.substr(start, end - start)));
 
-
-
-
     //Second step is to put that to the map//
     strobes["\"‫‪/instrumentation/airspeed-indicator/indicated-speed-kt\""] = stod(sol.at(0));
     strobes["\"/instrumentation/altimeter/indicated-altitude-ft\""] = stod(sol.at(1));
@@ -75,10 +75,7 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
     strobes["‫‪\"/instrumentation/vertical-speed-indicator/indicated-speed-fpm\""] = stod(sol.at(16));
     strobes["\"/controls/flight/ailero\""] = stod(sol.at(17));
     strobes["\"/controls/flight/elevator\""] = stod(sol.at(18));
-    strobes["A"] = stod(sol.at(19));
-
-    cout << "and current A (rudder) is " << strobes["A"] << "\n";
-
+    strobes["\"/controls/flight/rudder\""] = stod(sol.at(19));
     strobes["‫‪\"/controls/flight/flaps\""] = stod(sol.at(20));
     strobes["‫\"/controls/engines/current-engine/throttle\""] = stod(sol.at(21));
     strobes["‫‪\"/engines/engine/rpm\""] = stod(sol.at(22));
@@ -94,16 +91,21 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
 
 void DataReaderServer::updateBindedValues() {
     cout << "size of bind table is " << bindTable.size() << endl;
+
     cout << "[Update binded values] Welcome to check and update\n";
     for (std::map<string, string>::iterator it = bindTable.begin(); it != bindTable.end(); ++it) {
+
         std::cout << it->first << " => " << it->second << '\n';
-        if (strobes[it->second] != 0) { // THIS CHECK - IS IT GOOD?
-            cout << "Ok! there's a bineded value! Update it's symbolTable\n which is: " << it->first << endl;
-            symbolMap->set(it->first, strobes[bindTable[it->first]]);
+        if (this->symbolMap->isInMap(it->second)) {
+            cout << it->second << "  ITS TRUE VALUE ISS :   " << symbolMap->get(it->second) << "\n";
         } else {
-            strobes.erase(bindTable[it->first]);
-            bindTable.erase(it->first);
-            cout << "HE WANTED TO ERASE ME" << it->first << endl;
+            cout << it->second << "NOT initialize yet" << "\n";
+        }
+
+        // if the address of the binded variable was found in strobes, symbol table is updated:
+        if (strobes.find(it->second) != strobes.end()) {
+            cout << "Ok! there's a bineded value! Update it's symbolTable\n which is: " << it->first << endl;
+            symbolMap->set(it->second, strobes[it->second]);
         }
     }
 }
@@ -165,19 +167,15 @@ void *DataReaderServer::runServer(void *a) {
 }
 
 void *DataReaderServer::runServerFunc(void *a) {
-    int lastPos = 0;
-    int count = 0;
-    int n, index = 0;
+    int index = 0;
+    int n = 0;
     char buffer[256];
-    string information;
-    string remainder, backRemainder;
+    bzero(buffer, 256);
+    string remainder, backRemainder, information;
     bool isDataEnd = false;
 
     while (true) {              //SCAT here
 
-        sleep(5);
-
-        bzero(buffer, 256);
         n = read(this->newSockFd, buffer, 255);
         if (n < 0) {
             perror("ERROR reading from socket");
@@ -190,14 +188,14 @@ void *DataReaderServer::runServerFunc(void *a) {
             backRemainder = "";
         }
 
-        int index = information.find("\n");
-        // if the new line was not found yet, append all of the information.
+        index = information.find("\n");
+        // if the line terminator was not found, append all of the information.
         if (index == std::string::npos) {
             remainder += information;
         } else {
             // appends the remainder of the information until the next line.
             remainder += information.substr(0, index);
-            backRemainder = information.substr(index +1, information.length());
+            backRemainder = information.substr(index + 1, information.length());
             isDataEnd = true;
         }
 
@@ -208,17 +206,6 @@ void *DataReaderServer::runServerFunc(void *a) {
             remainder = "";
             isDataEnd = false;
         }
-
-//        printf("Got it : %c\n", information.substr(i, i = information.find(",")));
-//        while()
-//        strobes[]
-
-/* Write a response to the client */
-//        n = write(newsockfd, "I got your message\n", 19);
-//        if (n < 0) {
-//            perror("ERROR writing to socket");
-//            exit(1);
-//        }
     }
 }
 
