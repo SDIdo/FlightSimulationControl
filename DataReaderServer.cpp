@@ -26,6 +26,11 @@ double DataReaderServer::getFromBindValues(string bindVal) {
     return strobes.at(bindVal);
 }
 
+string DataReaderServer::getBindAddress(string varName) {
+    cout << "[DataReader] Looking through the binds...\n";
+    return bindTable.at(varName);
+}
+
 void DataReaderServer::setSock(int newSock) {
     sockfd = newSock;
 }
@@ -70,9 +75,12 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
     strobes["‫‪\"/instrumentation/vertical-speed-indicator/indicated-speed-fpm\""] = stod(sol.at(16));
     strobes["\"/controls/flight/ailero\""] = stod(sol.at(17));
     strobes["\"/controls/flight/elevator\""] = stod(sol.at(18));
-    strobes["‫‪\"/controls/flight/rudder\""] = stod(sol.at(19));
+    strobes["A"] = stod(sol.at(19));
+
+    cout << "and current A (rudder) is " << strobes["A"] << "\n";
+
     strobes["‫‪\"/controls/flight/flaps\""] = stod(sol.at(20));
-    strobes["‫\"/controls/engines/engine/throttle\""] = stod(sol.at(21));
+    strobes["‫\"/controls/engines/current-engine/throttle\""] = stod(sol.at(21));
     strobes["‫‪\"/engines/engine/rpm\""] = stod(sol.at(22));
 
 
@@ -85,10 +93,11 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
 }
 
 void DataReaderServer::updateBindedValues() {
+    cout << "size of bind table is " << bindTable.size() << endl;
     cout << "[Update binded values] Welcome to check and update\n";
     for (std::map<string, string>::iterator it = bindTable.begin(); it != bindTable.end(); ++it) {
         std::cout << it->first << " => " << it->second << '\n';
-        if (strobes[bindTable[it->first]] != 0) {
+        if (strobes[it->second] != 0) { // THIS CHECK - IS IT GOOD?
             cout << "Ok! there's a bineded value! Update it's symbolTable\n which is: " << it->first << endl;
             symbolMap->set(it->first, strobes[bindTable[it->first]]);
         } else {
@@ -148,29 +157,57 @@ void *DataReaderServer::open() {
     /* If connection is established then start communicating on a pthread */
 
     pthread_t t1ID;
-    pthread_create(&t1ID, nullptr, &DataReaderServer::runServer, nullptr);
+    pthread_create(&t1ID, nullptr, runServer, this);
 }
 
+void *DataReaderServer::runServer(void *a) {
+    return ((DataReaderServer *) a)->runServerFunc(a);
+}
 
-void *DataReaderServer::runServerFunc(void *) {
-    int n;
+void *DataReaderServer::runServerFunc(void *a) {
+    int lastPos = 0;
+    int count = 0;
+    int n, index = 0;
     char buffer[256];
+    string information;
+    string remainder, backRemainder;
+    bool isDataEnd = false;
+
     while (true) {              //SCAT here
+
+        sleep(5);
+
         bzero(buffer, 256);
         n = read(this->newSockFd, buffer, 255);
-
         if (n < 0) {
             perror("ERROR reading from socket");
             exit(1);
         }
+        information = string(buffer);
 
-        printf("Information from simulator: %s\n", buffer);
-        string information = buffer;
+        if (backRemainder != "") {
+            remainder = backRemainder;
+            backRemainder = "";
+        }
 
+        int index = information.find("\n");
+        // if the new line was not found yet, append all of the information.
+        if (index == std::string::npos) {
+            remainder += information;
+        } else {
+            // appends the remainder of the information until the next line.
+            remainder += information.substr(0, index);
+            backRemainder = information.substr(index +1, information.length());
+            isDataEnd = true;
+        }
 
-        takeSamplesToTable(information);   //receive and update local map.
-        updateBindedValues();
-
+        if (isDataEnd) {
+            cout << "Information from simulator: " << remainder.length() << "and the data: " << remainder << "\n";
+            takeSamplesToTable(remainder);   //receive and update local map.
+            updateBindedValues();
+            remainder = "";
+            isDataEnd = false;
+        }
 
 //        printf("Got it : %c\n", information.substr(i, i = information.find(",")));
 //        while()
@@ -178,13 +215,53 @@ void *DataReaderServer::runServerFunc(void *) {
 
 /* Write a response to the client */
 //        n = write(newsockfd, "I got your message\n", 19);
-
-        if (n < 0) {
-            perror("ERROR writing to socket");
-            exit(1);
-        }
+//        if (n < 0) {
+//            perror("ERROR writing to socket");
+//            exit(1);
+//        }
     }
 }
+
 void DataReaderServer::close() {
 //    close();      //SCAT no close but hightly needed!
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+THis is try */
+
+//while (index < information.length()) {
+//index = information.find(",");
+//// if the new line was not found yet, append all of the information.
+//if (index == std::string::npos) {
+//remainder += information.substr(lastPos, information.length());
+//} else {
+//// appends the remainder of the information until the next line.
+//remainder += information.substr(0, index);
+//lastPos = index + 1;
+//count++;
+//}
+//}
+//// if done with delimeters, valid input.
+//if (count == 22) {
+//cout << "Length of clean input: " << remainder.length() << "and the data: " << remainder << "\n";
+////            takeSamplesToTable(remainder);   //receive and update local map.
+////            updateBindedValues();
+//remainder = "";
+//index = 0;
+//lastPos = 0;
+//count = 0;
+//}

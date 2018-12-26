@@ -7,6 +7,7 @@
 #include "IfCommand.h"
 #include "SleepCommand.h"
 #include "PrintCommand.h"
+#include "VarCommand.h"
 
 /**
  * Constructor of LineParser, used for parsing single line.
@@ -47,6 +48,12 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
         }
 
         case Var : {
+            // THIS 3 LINES IS WHAT NEEDS TO HAPPEN :
+//            VarCommand varCommand(stringVector.at(1), stringVector.at(2),
+//                                  stringVector.at(3), stringVector.at(4), this->dataReaderServer);
+//            indexJumpValue = varCommand.execute();
+
+
             // from the likes of var x = 8
             cout << "Here with " << stringVector.at(3) << "\n";
 
@@ -64,7 +71,8 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
 
                     if (this->dataReaderServer.isInBindMap(stringVector.at(1))) {
                         cout << "Hmm so this x is binded!\n";
-                        string address = stringVector.at(this->dataReaderServer.getFromBindValues(stringVector.at(1)));
+                        string address = this->dataReaderServer.getBindAddress(stringVector.at(1));
+                        cout << address << endl; // PRINT
                         string update = " " + stringVector.at(3);
                         string updatedAddress = address + update;
 
@@ -91,7 +99,7 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
                 cout << "[Line parser] Yep it is there. Updating server\n";
 //                    this->dataReaderServer.setBind(stringVector.at(0), stringVector.at(2)); //SCAT like no expressions yet
                 string address = stringVector.at(this->dataReaderServer.getFromBindValues(stringVector.at(0)));
-                cout << "Aftr te serec\n";
+                cout << "After te search\n";
                 string update = " " + stringVector.at(2);
                 string updatedAddress = address + update;
 

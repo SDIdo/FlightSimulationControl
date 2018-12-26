@@ -59,7 +59,6 @@ int DataSender::openPipe() {
         perror("ERROR connecting");
         exit(1);
     }
-
     return 3; //num of moves in the lexer
 }
 

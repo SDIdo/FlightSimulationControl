@@ -16,6 +16,7 @@
 #include <map>
 #include <vector>
 #include "SymbolTable.h"
+#include <thread>
 
 
 
@@ -38,12 +39,10 @@ public:
     double getFromBindValues(string);
     void takeSamplesToTable(string);
     void setBind(string, string);
+    string getBindAddress(string varName);
     void updateBindedValues();
     void * open();
-    static void * runServer(void * a){
-        printf("hey");
-        return ((DataReaderServer *)a)->runServerFunc(a);
-    }
+    static void * runServer(void * a);
     void * runServerFunc(void *);
     void close();
 
