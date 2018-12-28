@@ -34,10 +34,10 @@ int VarCommand::execute() {
         address = valueVector.at(0);
         if (this->dataReaderServer->isInBindMap(address)) {
             address = this->dataReaderServer->getBindAddress(address);
+            valueVector.clear();
+            valueVector.push_back(address);
         }
-        vector<string> addressVector;
-        addressVector.push_back(address);
-        string expressionAfterEquation = this->util.shuntingYard(addressVector);
+        string expressionAfterEquation = this->util.shuntingYard(valueVector);
         cout << this->varName << " = " << expressionAfterEquation << "\n";
         this->dataReaderServer->setSymbol(this->varName, stod(expressionAfterEquation));
         return 4;

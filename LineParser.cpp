@@ -8,8 +8,9 @@
  * Constructor of LineParser, used for parsing single line.
  * @param symbolTable symbol table for variables access.
  */
-LineParser::LineParser(SymbolTable *symbolTable) {
+LineParser::LineParser(SymbolTable *symbolTable, DataReaderServer *dataReaderServer) {
     this->symbolTable = symbolTable;
+    this->dataReaderServer = dataReaderServer;
     this->util.set(this->symbolTable);
 }
 
@@ -27,7 +28,7 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
         case OpenDataServer : {
             string port = util.shuntingYard(smallLexer.lexer(stringVector.at(1)));
             string herz = util.shuntingYard(smallLexer.lexer(stringVector.at(2)));
-            OpenServerCommand openServer(port, herz, &this->dataReaderServer, this->symbolTable);
+            OpenServerCommand openServer(port, herz, this->dataReaderServer, this->symbolTable);
             cout << "So let's see what's about to be opened " << port << ", " << herz << "\n";
             indexJumpValue = openServer.execute();
             break;
@@ -42,11 +43,11 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
 
         case Var : {
             if (stringVector.size() == 5) {
-                VarCommand varCommand(&this->dataReaderServer, this->symbolTable, stringVector.at(1),
+                VarCommand varCommand(this->dataReaderServer, this->symbolTable, stringVector.at(1),
                                       stringVector.at(2), stringVector.at(3), stringVector.at(4));
                 indexJumpValue = varCommand.execute();
             } else {
-                VarCommand varCommand(&this->dataReaderServer, this->symbolTable, stringVector.at(1),
+                VarCommand varCommand(this->dataReaderServer, this->symbolTable, stringVector.at(1),
                                       stringVector.at(2), stringVector.at(3));
                 indexJumpValue = varCommand.execute();
             }
@@ -54,7 +55,7 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
         }
 
         case Equal : {
-            EqualCommand equalCommand(&this->dataReaderServer, &this->dataSender, stringVector.at(0),
+            EqualCommand equalCommand(this->dataReaderServer, &this->dataSender, stringVector.at(0),
                                       stringVector.at(2), this->symbolTable);
             indexJumpValue = equalCommand.execute();
             break;
@@ -78,9 +79,9 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
             else {
                 if (this->symbolTable->isInMap(stringVector.at(1))) {
                     printString = to_string(this->symbolTable->get(stringVector.at(1)));
-                } else if (this->symbolTable->isInMap(this->dataReaderServer.getBindAddress(stringVector.at(1)))) {
+                } else if (this->symbolTable->isInMap(this->dataReaderServer->getBindAddress(stringVector.at(1)))) {
                     printString = to_string(
-                            this->symbolTable->get(this->dataReaderServer.getBindAddress(stringVector.at(1))));
+                            this->symbolTable->get(this->dataReaderServer->getBindAddress(stringVector.at(1))));
                 } else {
                     cout << "Var not in symbol map" << "\n";
                 }
@@ -101,6 +102,8 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
 
             // if the command is invalid command, print error message.
         default:
+            cout << "command is" << stringVector.at(1) << endl;
+            sleep(100);
             cout << "No such Command\n";
     }
 

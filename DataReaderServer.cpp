@@ -21,8 +21,8 @@ void DataReaderServer::setSymbol(string symbol, double value) {
 }
 
 string DataReaderServer::getBindAddress(string varName) {
-    cout << "[DataReader] Looking for a bind address\n";
-        return bindTable.at(varName);
+    cout << "[DataReader] Looking for a bind address for: " << varName << "\n";
+    return bindTable.at(varName);
 }
 
 void DataReaderServer::setBind(string var, string address) {

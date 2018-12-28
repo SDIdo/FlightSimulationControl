@@ -21,6 +21,7 @@ void Utilities::set(SymbolTable *newSymbols) {
 }
 
 string Utilities::shuntingYard(vector<string> instream) {
+//    cout << "Hello and welcome to shuntingYard!\n";
     stack<string> operationStack;
     queue<string> outPutQueue;
     for (std::vector<string>::iterator it = instream.begin(); it != instream.end(); ++it) {
@@ -50,26 +51,34 @@ string Utilities::shuntingYard(vector<string> instream) {
 
             outPutQueue.push(*it);
         } else {
+            cout << "[ShuntingYard] That's a variable get it from the symbolTable " << *it << "\n";
+            cout << "[ShuntingYard] Wants to open the symbolTable\n";
             outPutQueue.push(to_string(symbols->get(*it)));
+            cout << "[ShuntingYard] Got it from the symbolTable " << symbols->get(*it) << "\n";
         }
     }
     while (!operationStack.empty()) {
-
+        cout << "[Shunting Yard ]Whats being transfered? : " << operationStack.top() << "\n";
         outPutQueue.push(operationStack.top());
         operationStack.pop();
     }
 
     while (!outPutQueue.empty()) {
-        std::cout << outPutQueue.front() << std::endl;
+        std::cout << "[Shunting Yard ] show what's on queue " << outPutQueue.front() << std::endl;
         string token = outPutQueue.front();
         outPutQueue.pop();
-
-        if (isdigit(token.at(0))) {
-
+        int i = 0;
+        if (token.at(0) == '-'){
+            cout << "Ohhh! that's a minus!\n";
+            i = 1;
+        }
+        if (isdigit(token.at(i))) {     //SCAT!
+            cout << "[ShuntingYard] It is a digit " << token.at(0) << "\n";
             operationStack.push(token);
         } else {
-
+            cout << "This should be the right element: " << operationStack.top() << "\n";
             string right = operationStack.top();
+
             operationStack.pop();
             string left = "0";
             if (!operationStack.empty()) {
@@ -83,6 +92,7 @@ string Utilities::shuntingYard(vector<string> instream) {
             operationStack.push(sol);
         }
     }
+    cout << "From the factory of shinting yard::: " << operationStack.top() << endl;
     return operationStack.top();
 }
 

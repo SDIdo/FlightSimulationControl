@@ -10,6 +10,7 @@
 #include "SymbolTable.h"
 #include "Utilities.h"
 #include "SmallLexer.h"
+#include "DataReaderServer.h"
 
 class ConditionParser : public Command {
     Utilities util;

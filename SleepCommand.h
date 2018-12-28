@@ -16,7 +16,7 @@ public :
     }
 
     virtual int execute() {
-        sleep(this->sleepTime);
+        usleep(this->sleepTime);
         return 2;
     }
 };

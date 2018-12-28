@@ -12,15 +12,17 @@
 #include "BigLexer.h"
 #include "SymbolTable.h"
 #include "Utilities.h"
+#include "DataReaderServer.h"
 
 class BlockParser {
     CommandMap commandMap;
     SymbolTable *symbolTable;
+    DataReaderServer *dataReaderServer;
     SmallLexer smallLexer;
     Utilities util;
 public:
     void parse(vector<string> stringVector);
-    BlockParser(SymbolTable* symbolTable);
+    BlockParser(SymbolTable* symbolTable, DataReaderServer *dataReaderServer);
 };
 
 

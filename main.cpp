@@ -180,8 +180,9 @@ int main(int argc, char *argv[]) {
  * this main simulates the real main used for the flight simulator.
  */
     SymbolTable st;
-    LineParser lineParser(&st); // parser gets a pointer to the shared symbol table.
-    BlockParser blockParser(&st); // block parser gets a pointer to the shared symbol table.
+    DataReaderServer dataReaderServer;
+    LineParser lineParser(&st, &dataReaderServer); // parser gets a pointer to the shared symbol table and DRS
+    BlockParser blockParser(&st, &dataReaderServer); // block parser gets pointers to the shared symbol table and DRS
     BigLexer bl;
     string userInput;
     vector<string> stringVector;
@@ -218,21 +219,43 @@ int main(int argc, char *argv[]) {
             // get all of the user input until the end of the if/while statement.
             int openedBrackets = 1;
             while (openedBrackets != 0) {
-                getline(cin, userInput);
+                if (fromFile) {
+                    if (getline(myFile, line)) {
+                        userInput = line;
+                    } else {
+                        break;
+                    }
+                }
+                if (!fromFile) {
+                    getline(cin, userInput);
+                }
                 if (userInput.back() == '}') {
                     openedBrackets -= 1;
                     continue;
                 } else if (userInput.back() == '{') {
                     openedBrackets += 1;
                 }
-                blockString += userInput;
+                blockString += " " + userInput;
             }
+
+            cout << "user line input is :" << blockString << endl;
+            vector<string> lexedVec1 = bl.lexer(blockString);
+            for (int i = 0; i < lexedVec1.size(); i++) {
+                cout << " EACH THING IN THE LEXED VECTOR " << lexedVec1.at(i);
+            }
+            cout << "\n";
 
             stringVector = bl.lexer(blockString);
             blockParser.parse(stringVector);
         }
             // command was a line command.
         else {
+            cout << "user line input is :" << userInput << endl;
+            vector<string> lexedVec = bl.lexer(userInput);
+            for (int i = 0; i < lexedVec.size(); i++) {
+                cout << " EACH THING IN THE LEXED VECTOR " << lexedVec.at(i);
+            }
+            cout << "\n";
             lineParser.parse(bl.lexer(userInput), 0);
         }
     }

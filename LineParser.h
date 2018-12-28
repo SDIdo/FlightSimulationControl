@@ -29,11 +29,11 @@ class LineParser {
     SymbolTable* symbolTable;
     SmallLexer smallLexer;
     Utilities util;
-    DataReaderServer dataReaderServer;
+    DataReaderServer *dataReaderServer;
     DataSender dataSender;
 public:
     int parse(vector<string> stringVector, int startIndex);
-    LineParser(SymbolTable* symbolTable);
+    LineParser(SymbolTable* symbolTable, DataReaderServer *dataReaderServer);
 };
 
 

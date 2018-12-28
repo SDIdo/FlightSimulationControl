@@ -9,10 +9,10 @@
 #include "ConditionParser.h"
 
 class IfCommand : public ConditionParser {
-
+DataReaderServer *dataReaderServer;
 public:
     IfCommand(vector<string> commandStringVector, string exp1String, string exp2String,
-            string condition, SymbolTable *symbolTablePtr);
+            string condition, SymbolTable *symbolTablePtr, DataReaderServer *dataReaderServer);
     virtual int execute();
 };
 

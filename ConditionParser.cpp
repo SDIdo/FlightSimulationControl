@@ -9,12 +9,8 @@
  * @return boolean - is condition met.
  */
 bool ConditionParser::conditionIsMet() {
-    this->util.set(this->symbolTablePtr);
-
-    
-
-    double exp1Val = stod(this->util.shuntingYard(this->smallLexer.lexer(this->exp1String)));
-    double exp2Val = stod(this->util.shuntingYard(this->smallLexer.lexer(this->exp2String)));
+    double exp1Val = stod(this->exp1String);
+    double exp2Val = stod(this->exp2String);
     if (this->condition == "<") {
         return exp1Val < exp2Val;
     } else if (this->condition == ">") {
