@@ -1,50 +1,45 @@
-////
-//// Created by roy on 12/25/18.
-////
 //
-//#include <iostream>
-//#include "VarCommand.h"
+// Created by roy on 12/25/18.
 //
-//VarCommand::VarCommand(string varName, string equalSign, string valueString, string pathString,
-//                       DataReaderServer dataReaderServer) {
-//    this->varName = varName;
-//    this->equalSign = equalSign;
-//    this->valueString = valueString;
-//    this->pathString = pathString;
-//    this->dataReaderServer = dataReaderServer;
-//}
-//
-//int VarCommand::execute() {
-//    // from the likes of var x = 8 / var x = bind "path".
-//
-//    // if the var command is bind command.
-//    if ((this->equalSign == "=") && (this->valueString == "bind")) {
-////                cout << "Time to update bind map!\n";
-//        this->dataReaderServer.setBind(this->varName, this->pathString);
-//    }
-//        // else, the var command is a input command.
-//    else {
-//        string expressionAfterEquation = this->util.shuntingYard(this->smallLexer.lexer(this->valueString));
-//        char charAfterEquation = expressionAfterEquation.at(0);
-//        if (this->equalSign == "=" && isdigit(charAfterEquation)) {
-//            cout << "Detected var x = " << expressionAfterEquation << "\n";
-//
-//            cout << "Now check whether it's binded with the simulator..\n";
-//
-//            if (this->dataReaderServer.isInBindMap(this->varName)) {
-//                cout << "Hmm so this x is binded!\n";
-//                string address = stringVector.at(this->dataReaderServer.getFromBindValues(this->varName));
-//                string update = " " + this->valueString;
-//                string updatedAddress = address + update;
-//
-//                char toSend[256];
-//                strcpy(toSend, updatedAddress.c_str());
-//
-//                this->dataSender.sendCommand(toSend);
-//            } else {
-//                symbolTable->set(this->varName, stod(expressionAfterEquation));
-//                cout << "Now let's see.. " << symbolTable->get("x") << "\n";
-//            }
-//        }
-//    }
-//}
+
+#include <iostream>
+#include "VarCommand.h"
+
+VarCommand::VarCommand(DataReaderServer *dataReaderServer, SymbolTable *symbolTable, string varName, string equalSign,
+                       string valueString, string pathString) {
+    this->varName = varName;
+    this->equalSign = equalSign;
+    this->valueString = valueString;
+    this->pathString = pathString;
+    this->dataReaderServer = dataReaderServer;
+    this->symbolTable = symbolTable;
+    this->util.set(symbolTable);
+}
+
+int VarCommand::execute() {
+    cout << "Here with " << this->valueString << "\n";
+
+    // if the command was bind: (like var break = bind "/controls/flight/fastbreaks" ")
+    if ((this->equalSign == "=") && (this->valueString == "bind")) {
+        cout << "Time to update bind map!\n";
+        cout << this->varName << " => " << this->pathString << "\n";
+        this->dataReaderServer->setBind(this->varName, this->pathString);
+        return 5;
+    }
+        // else, the variable is a local variable, and not binded var: (like "var breaks = 0")
+    else {
+        cout << "Time to update SYMBOL map...\n";
+        string address;
+        vector<string> valueVector = this->smallLexer.lexer(this->valueString);
+        address = valueVector.at(0);
+        if (this->dataReaderServer->isInBindMap(address)) {
+            address = this->dataReaderServer->getBindAddress(address);
+        }
+        vector<string> addressVector;
+        addressVector.push_back(address);
+        string expressionAfterEquation = this->util.shuntingYard(addressVector);
+        cout << this->varName << " = " << expressionAfterEquation << "\n";
+        this->dataReaderServer->setSymbol(this->varName, stod(expressionAfterEquation));
+        return 4;
+    }
+}

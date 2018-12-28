@@ -14,12 +14,12 @@ class BinaryExpression : public Expression{
 public:
     Expression* left;
     Expression* right;
+    virtual void set(Expression*, Expression*);
+    virtual double calculate() = 0;
     virtual ~BinaryExpression(){
         delete (left);
         delete (right);
     };
-    virtual void set(Expression*, Expression*);
-    virtual double calculate() = 0;
 };
 
 

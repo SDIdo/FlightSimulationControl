@@ -96,7 +96,3 @@ void DataSender::sendCommand(const char buffer[256]) {
 
     printf("That was sent: %s\n", myBuffer);
 }
-
-void DataSender::closeSocket() {
-    close(getSock());
-}

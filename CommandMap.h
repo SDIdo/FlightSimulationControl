@@ -5,14 +5,14 @@
 #ifndef PROJECTPART1_COMMANDMAP_H
 #define PROJECTPART1_COMMANDMAP_H
 
-#include <map>
 #include <string>
+#include <unordered_map>
 using namespace std;
 
 enum Commands {InValid, OpenDataServer, Connect, Var, Bind, Equal, While, If, Print, Sleep};
 
 class CommandMap {
-map<string,Commands> commands = {{"openDataServer" ,OpenDataServer}, {"connect" ,Connect},
+    unordered_map<string,Commands> commands = {{"openDataServer" ,OpenDataServer}, {"connect" ,Connect},
                                  {"var" ,Var}, {"bind" ,Bind}, {"=" ,Equal}, {"while" ,While},
                                  {"sleep" ,Sleep}, {"if" ,If}, {"print" ,Print}};
 

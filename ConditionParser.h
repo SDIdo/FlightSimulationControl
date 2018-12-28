@@ -17,7 +17,7 @@ class ConditionParser : public Command {
 public:
     string condition, exp1String, exp2String;
     vector<string> commandStringVector;
-    SymbolTable symbolTablePtr;
+    SymbolTable *symbolTablePtr;
     virtual int execute() = 0;
     virtual bool conditionIsMet();
 };

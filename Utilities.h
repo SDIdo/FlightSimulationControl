@@ -9,20 +9,20 @@
 #define PROJECTPART1_UTILITIES_H
 
 #include "SymbolTable.h"
-#include <map>
+#include <unordered_map>
 #include "BinaryExpression.h"
 #include <string>
 #include <vector>
 using namespace std;
 
 class Utilities {
-    map<string, BinaryExpression*> operators;
-    SymbolTable symbolsTable;
+    unordered_map<string, BinaryExpression*> operators;
+    SymbolTable* symbols;
 public:
     Utilities();
-    ~Utilities();
-    void set(SymbolTable&);
-    string shuntingYard(vector<string> instream, SymbolTable&);
+    ~Utilities() = default;
+    void set(SymbolTable*);
+    string shuntingYard(vector<string> instream);
     int precedence(string);
 };
 

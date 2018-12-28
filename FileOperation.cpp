@@ -1,17 +1,30 @@
 //
-// Created by idox on 12/27/18.
+// Created by roy on 12/27/18.
 //
 
 #include "FileOperation.h"
+#include <iostream>
+#include <cstring>
+#include <string.h>
+#include <string>
+
+using namespace std;
 
 string FileOperation::readFrom(string path) {
-        ifstream myfile;
-        myfile.open(path); //check for error..
-        if (!myfile){
-            return "NULL";
+    string line, result;
+    ifstream myfile (path);
+    if (myfile.is_open())
+    {
+        while ( getline (myfile,line) )
+        {
+            result += line += "\n";
         }
-        string reader;
-        myfile >> reader;
         myfile.close();
-        return reader;
+    }
+
+    else cout << "Unable to open file";
+
+    cout << result << endl;
+
+    return result;
 }

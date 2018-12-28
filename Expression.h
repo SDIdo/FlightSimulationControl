@@ -7,8 +7,8 @@
 
 class Expression{
 public:
-    virtual ~Expression() = default;
     virtual double calculate() = 0;
+    virtual ~Expression() = default;
 };
 
 #endif //PROJECTPART1_EXPRESSION_H

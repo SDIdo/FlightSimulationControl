@@ -31,6 +31,11 @@ vector<string> BigLexer::lexer(string str) {
             // if the char is a digit, or expression operation:
         else if (isdigit(str.at(i)) || isExpOperator(str.at(i))) {
 
+            // if the digit is a continuation of the alphabetic string, its a varialbe name.
+            if (alphabetChar && !validAlphaExp && isdigit(str.at(i))) {
+                alphabetChar = false;
+            }
+
             // if reached an end of alphabetic expression, adds it to the vector and creates new string.
             if (alphabetChar || validAlphaExp) {
                 if (!(str.at(i) == '+' || str.at(i) == '-' || str.at(i) == '/' || str.at(i) == '*')) {
@@ -50,7 +55,6 @@ vector<string> BigLexer::lexer(string str) {
 
             // while current char is digit, dot, or valid expression operator, adds to curr str.
             while (i < str.length() && (isdigit(str.at(i)) || str.at(i) == '.' || isExpOperator(str.at(i)))) {
-
                 validExpEnd = isdigit(str.at(i)) || str.at(i) == ')';
                 currentStr += str.at(i);
                 i++;

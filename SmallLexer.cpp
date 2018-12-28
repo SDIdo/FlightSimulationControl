@@ -60,10 +60,14 @@ vector<string> SmallLexer::lexer(string str) {
         }
             // if the char is an operator, add it, reset the string and continue.
         else if (this->isOperator(str.at(i))) {
+            if (!currentStr.empty()) {
+                stringArray.push_back(currentStr);
+                currentStr = "";
+            }
             currentStr += str.at(i);
             stringArray.push_back(currentStr);
-            i++;
             currentStr = "";
+            i++;
             continue;
         }
             // if not valid.
@@ -77,7 +81,6 @@ vector<string> SmallLexer::lexer(string str) {
     }
 
     return stringArray;
-
 }
 
 /**

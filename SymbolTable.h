@@ -5,13 +5,15 @@
 #ifndef PROJECTPART1_SYMBOLTABLE_H
 #define PROJECTPART1_SYMBOLTABLE_H
 
-#include <map>
+#include <unordered_map>
 #include <string>
+#include <mutex>
 
 using namespace std;
 
 class SymbolTable {
-    map<string, double> symbols;
+    unordered_map<string, double> symbols;
+    mutex m;
 
 public:
     /**
@@ -20,21 +22,19 @@ public:
      * @param symbolString given string to search in map.
      * @return double value of the given string.
      */
-    double get(string const symbolString) const {
+    double get(string symbolString) {
+        lock_guard<mutex> guard(this->m);
         return symbols.at(symbolString);
     }
 
     bool isInMap(string varName) {
-        for (std::map<string, double>::iterator it = symbols.begin(); it != symbols.end(); ++it) {
+        lock_guard<mutex> guard(this->m);
+        for (unordered_map<string, double>::iterator it = symbols.begin(); it != symbols.end(); ++it) {
             if (it->first == varName) {
                 return true;
             }
         }
         return false;
-    }
-
-    unsigned long size(){
-        return symbols.size();
     }
 
     /**
@@ -43,6 +43,7 @@ public:
      * @param symbolValue value of the symbol.
      */
     void set(string symbolString, double symbolValue) {
+        lock_guard<mutex> guard(this->m);
         this->symbols[symbolString] = symbolValue;
     }
 

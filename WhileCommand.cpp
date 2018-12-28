@@ -6,7 +6,7 @@
 #include "LineParser.h"
 
 WhileCommand::WhileCommand(vector<string> commandStringVector, string exp1String, string exp2String,
-                           string condition, SymbolTable &symbolTablePtr) {
+                           string condition, SymbolTable *symbolTablePtr) {
     this->commandStringVector = commandStringVector;
     this->exp1String = exp1String;
     this->exp2String = exp2String;

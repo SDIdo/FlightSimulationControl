@@ -12,7 +12,7 @@ class IfCommand : public ConditionParser {
 
 public:
     IfCommand(vector<string> commandStringVector, string exp1String, string exp2String,
-            string condition, SymbolTable &symbolTablePtr);
+            string condition, SymbolTable *symbolTablePtr);
     virtual int execute();
 };
 

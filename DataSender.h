@@ -30,15 +30,12 @@ class DataSender {
     int sockfd;
 public:
     DataSender() = default;
-    ~DataSender(){
-        closeSocket();
-    }
+    ~DataSender() = default;
     void set(string, string);
     int openPipe();
     void sendCommand(const char*);
     int getSock();
     void setSock(int newSock);
-    void closeSocket();
 };
 
 #endif //PROJECTPART1_DATASENDER_H

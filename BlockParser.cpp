@@ -12,8 +12,9 @@
  * Constructor of BlockParser, used for parsing blocks of strings.
  * @param symbolTable symbol table for variables access.
  */
-BlockParser::BlockParser(SymbolTable &symbolTable) {
+BlockParser::BlockParser(SymbolTable *symbolTable) {
     this->symbolTable = symbolTable;
+    this->util.set(this->symbolTable);
 }
 
 void BlockParser::parse(vector<string> stringVector) {
@@ -21,9 +22,9 @@ void BlockParser::parse(vector<string> stringVector) {
     Commands command = commandMap.getCommand(commandString);
 
     // prepares the expressions and condition for the IfCommand / WhileCommand.
-    string exp1String = stringVector.at(1);
+    string exp1String = this->util.shuntingYard(this->smallLexer.lexer(stringVector.at(1)));
     string condition = stringVector.at(2);
-    string exp2String = stringVector.at(3);
+    string exp2String = this->util.shuntingYard(this->smallLexer.lexer(stringVector.at(3)));
 
     // NEED TO DELETE BEGININNG OF VECTOR ("if", conditionals... )
     stringVector.erase(stringVector.begin());

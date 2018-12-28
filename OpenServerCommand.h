@@ -20,9 +20,9 @@ class OpenServerCommand : public Command {
     string port;
     string herz;
     DataReaderServer *dataReaderServer;
-    SymbolTable symbolTable;
+    SymbolTable *symbolTable;
 public:
-    OpenServerCommand(string, string, DataReaderServer *, SymbolTable&);
+    OpenServerCommand(string, string, DataReaderServer *, SymbolTable*);
     ~OpenServerCommand() = default;
     virtual int execute();
 };

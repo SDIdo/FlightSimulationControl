@@ -15,13 +15,12 @@
 
 class BlockParser {
     CommandMap commandMap;
-    SymbolTable symbolTable;
+    SymbolTable *symbolTable;
     SmallLexer smallLexer;
-    BigLexer bigLexer;
     Utilities util;
 public:
     void parse(vector<string> stringVector);
-    BlockParser(SymbolTable &symbolTable);
+    BlockParser(SymbolTable* symbolTable);
 };
 
 

@@ -1,13 +1,9 @@
 #include "DataReaderServer.h"
 
 
-void DataReaderServer::set(string newPort, string newHerz, SymbolTable &symbolTablePtr) {
-    cout << "start to set things.. " << stoi(newPort) << ", " << newHerz << "\n";
-    cout << "Before port is " << port << "\n";
+void DataReaderServer::set(string newPort, string newHerz, SymbolTable *symbolTablePtr) {
     port = stoi(newPort);
-    cout << "Then port is " << port << "\n";
     herz = stoi(newHerz);
-    cout << "Done setting things\n";
     this->symbolMap = symbolTablePtr;
 }
 
@@ -20,18 +16,18 @@ bool DataReaderServer::isInBindMap(string subject) {
     return true;
 }
 
-double DataReaderServer::getFromBindValues(string bindVarName) {
-    cout << "[DataReader] Looking through the binds...\n";
-    return strobes.at(getBindAddress(bindVarName));
-}
-
-void DataReaderServer::setStrobe(string bindVarName, string address) {
-    strobes[bindVarName] = 0;
+void DataReaderServer::setSymbol(string symbol, double value) {
+    this->symbolMap->set(symbol, value);
 }
 
 string DataReaderServer::getBindAddress(string varName) {
     cout << "[DataReader] Looking for a bind address\n";
-    return bindTable.at(varName);
+        return bindTable.at(varName);
+}
+
+void DataReaderServer::setBind(string var, string address) {
+//    cout << "New var is binded as such: " << var << " = " << address << "\n";
+    this->bindTable[var] = address;
 }
 
 void DataReaderServer::setSock(int newSock) {
@@ -61,63 +57,47 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
     strobes["\"‫‪/instrumentation/altimeter/pressure-alt-ft\""] = stod(sol.at(2));
     strobes["‫‪\"/instrumentation/attitude-indicator/indicated-pitch-deg\""] = stod(sol.at(3));
     strobes["\"‫‪/instrumentation/attitude-indicator/indicated-roll-deg\""] = stod(sol.at(4));
-    strobes["‫\"/instrumentation/attitude-indicator/internal-pitch-deg\""] = stod(sol.at(5));
+    strobes["\"instrumentation/attitude-indicator/internal-pitch-deg\""] = stod(sol.at(5));
     strobes["\"/instrumentation/attitude-indicator/internal-roll-deg\""] = stod(sol.at(6));
     strobes["‫‪\"/instrumentation/encoder/indicated-altitude-ft\""] = stod(sol.at(7));
     strobes["‫‪\"/instrumentation/encoder/pressure-alt-ft\""] = stod(sol.at(8));
     strobes["\"/instrumentation/gps/indicated-altitude-ft\""] = stod(sol.at(9));
     strobes["\"‫‪/instrumentation/gps/indicated-ground-speed-kt\""] = stod(sol.at(10));
-    strobes["‫\"/instrumentation/gps/indicated-vertical-speed\""] = stod(sol.at(11));
+    strobes["\"/instrumentation/gps/indicated-vertical-speed\""] = stod(sol.at(11));
     strobes["‫‪\"/instrumentation/heading-indicator/indicated-heading-deg\""] = stod(sol.at(12));
     strobes["\"/instrumentation/magnetic-compass/indicated-heading-deg\""] = stod(sol.at(13));
     strobes["‫‪\"/instrumentation/slip-skid-ball/indicated-slip-skid\""] = stod(sol.at(14));
     strobes["‫‪\"/instrumentation/turn-indicator/indicated-turn-rate\""] = stod(sol.at(15));
     strobes["‫‪\"/instrumentation/vertical-speed-indicator/indicated-speed-fpm\""] = stod(sol.at(16));
-    strobes["\"/controls/flight/ailero\""] = stod(sol.at(17));
+    strobes["\"/controls/flight/aileron\""] = stod(sol.at(17));
     strobes["\"/controls/flight/elevator\""] = stod(sol.at(18));
     strobes["\"/controls/flight/rudder\""] = stod(sol.at(19));
     strobes["‫‪\"/controls/flight/flaps\""] = stod(sol.at(20));
-    strobes["‫\"/controls/engines/current-engine/throttle\""] = stod(sol.at(21));
+    strobes["\"controls/engines/engine/throttle\""] = stod(sol.at(21));
     strobes["‫‪\"/engines/engine/rpm\""] = stod(sol.at(22));
 
-
-    //ETC.. add all the addresses ...
-
-
-
-//    cout << "Lets see for example the rudder.." << strobes.at("‫‪/controls/flight/rudder‬‬") << "\n";
-//    printf("Done managing the rudder which is now.. %d\n", stod(strobes.at("‫‪/controls/flight/rudder‬‬")));
 }
 
 void DataReaderServer::updateBindedValues() {
 //    cout << "size of bind table is " << bindTable.size() << endl;
-
-//    cout << "[Update binded values] Welcome to check and update\n";
-    for (std::map<string, string>::iterator it = bindTable.begin(); it != bindTable.end(); ++it) {
+    for (std::unordered_map<string, double>::iterator it = strobes.begin(); it != strobes.end(); ++it) {
 
 //        std::cout << it->first << " => " << it->second << '\n';
-        if (this->symbolMap.isInMap(it->second)) {
-//            cout << it->second << "  ITS TRUE VALUE ISS :   " << symbolMap.get(it->second) << "\n";
-        } else {
+//        if (this->symbolMap->isInMap(it->second)) {
+//            cout << it->second << "  ITS TRUE VALUE ISS :   " << symbolMap->get(it->second) << "\n";
+//        } else {
 //            cout << it->second << "NOT initialize yet" << "\n";
-        }
+//        }
 
         // if the address of the binded variable was found in strobes, symbol table is updated:
-        if (strobes.find(it->second) != strobes.end()) {
+        this->setSymbol(it->first, it->second);
 //            cout << "Ok! there's a bineded value! Update it's symbolTable\n which is: " << it->first << endl;
-            symbolMap.set(it->second, strobes[it->second]);
-        }
+
     }
 }
 
-void DataReaderServer::setBind(string var, string address) {
-    cout << "New var is binded as such: " << var << " = " << address << "\n";
-    this->bindTable[var] = address;
-}
-
 void *DataReaderServer::open() {
-    int sockfd = 0;
-    int clilen = 0;
+    int sockfd, newsockfd, portno, clilen;
     struct sockaddr_in serv_addr, cli_addr;
 
     /* First call to socket() function */
@@ -148,7 +128,7 @@ void *DataReaderServer::open() {
 
     listen(getSock(), 5);
     clilen = sizeof(cli_addr);
-    printf("Waiting for a client\n");
+    printf("Waiting for the for the simulator client\n");
     /* Accept actual connection from the client */
     this->newSockFd = accept(getSock(), (struct sockaddr *) &cli_addr, (socklen_t *) &clilen);
     printf("socket was created!\n");
@@ -210,47 +190,6 @@ void *DataReaderServer::runServerFunc(void *a) {
     }
 }
 
-void DataReaderServer::closeSocket() {
-    close(newSockFd);   //closes the socket of the communication between clien and the server
-    close(sockfd);  //closes the socket of the server itself
+void DataReaderServer::close() {
+//    close();      //SCAT no close but hightly needed!
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
-THis is try */
-
-//while (index < information.length()) {
-//index = information.find(",");
-//// if the new line was not found yet, append all of the information.
-//if (index == std::string::npos) {
-//remainder += information.substr(lastPos, information.length());
-//} else {
-//// appends the remainder of the information until the next line.
-//remainder += information.substr(0, index);
-//lastPos = index + 1;
-//count++;
-//}
-//}
-//// if done with delimeters, valid input.
-//if (count == 22) {
-//cout << "Length of clean input: " << remainder.length() << "and the data: " << remainder << "\n";
-////            takeSamplesToTable(remainder);   //receive and update local map.
-////            updateBindedValues();
-//remainder = "";
-//index = 0;
-//lastPos = 0;
-//count = 0;
-//}

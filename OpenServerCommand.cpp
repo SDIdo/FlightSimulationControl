@@ -3,13 +3,12 @@
 //
 
 #include "OpenServerCommand.h"
-#include <string>
 #include "iostream"
 
 using namespace std;
 
 OpenServerCommand::OpenServerCommand(string newPort, string newHerz,
-                                     DataReaderServer *newReader, SymbolTable &symbolTable) {
+                                     DataReaderServer *newReader, SymbolTable *symbolTable) {
     port = newPort;
     herz = newHerz;
     dataReaderServer = newReader;
