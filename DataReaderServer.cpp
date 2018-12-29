@@ -75,14 +75,12 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
     strobes["\"/controls/flight/rudder\""] = stod(sol.at(19));
     strobes["‫‪\"/controls/flight/flaps\""] = stod(sol.at(20));
     strobes["\"/controls/engines/engine/throttle\""] = stod(sol.at(21));
-    strobes["‫‪\"/engines/engine/rpm\""] = stod(sol.at(22));
+    strobes["\"/engines/engine/rpm\""] = stod(sol.at(22));
 
 }
 
 void DataReaderServer::updateBindedValues() {
     for (std::unordered_map<string, double>::iterator it = strobes.begin(); it != strobes.end(); ++it) {
-
-
         // if the address of the binded variable was found in strobes, symbol table is updated:
         this->setSymbol(it->first, it->second);
     }
@@ -126,7 +124,6 @@ void *DataReaderServer::open() {
         perror("ERROR on accept");
         exit(1);
     }
-    printf("Ever Listening..\n");       //SCAT! here you get array of information that updates the map..
     /* If connection is established then start communicating on a pthread */
     pthread_t t1ID;
     pthread_create(&t1ID, nullptr, runServer, this);

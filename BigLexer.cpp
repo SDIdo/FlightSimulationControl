@@ -112,6 +112,7 @@ vector<string> BigLexer::lexer(string str) {
             if (((str.at(i) == '<' || str.at(i) == '>') && str.at(i + 1) == '=') ||
                 ((str.at(i) == '!' || str.at(i) == '=') && str.at(i + 1) == '=')) {
                 currentStr += str.at(i + 1);
+                i++;
             }
             stringArray.push_back(currentStr);
             currentStr = "";
