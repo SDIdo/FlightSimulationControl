@@ -1,34 +1,26 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
  * File:   BinaryExpression.h
  * Author: idox
  *
- * Created on December 13, 2018, 12:52 PM
+ * Created on December 17, 2018, 8:43 PM
  */
 
-#ifndef BINARYEXPRESSION_H
-#define BINARYEXPRESSION_H
+#ifndef PROJECTPART1_BINARYEXPRESSION_H
+#define PROJECTPART1_BINARYEXPRESSION_H
+
 #include "Expression.h"
-#include <string>
-using namespace std;
 
 class BinaryExpression : public Expression{
+public:
     Expression* left;
     Expression* right;
-    string oper;
-public:
-    BinaryExpression(Expression*, string, Expression*);
-    BinaryExpression(double, double);
-    BinaryExpression(double, Expression*);
-    BinaryExpression(Expression*, double);
-    virtual double calculate();
-
+    virtual void set(Expression*, Expression*);
+    virtual double calculate() = 0;
+    virtual ~BinaryExpression(){
+        delete (left);
+        delete (right);
+    };
 };
 
-#endif /* BINARYEXPRESSION_H */
 
+#endif //PROJECTPART1_BINARYEXPRESSION_H
