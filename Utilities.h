@@ -16,6 +16,10 @@
 #include <vector>
 using namespace std;
 
+/**
+ * This class is responsible for calculating expressions given as
+ * string vectors by using the Shunting Yard method.
+ */
 class Utilities {
     unordered_map<string, BinaryExpression*> operators;
     SymbolTable* symbols;

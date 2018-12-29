@@ -5,6 +5,9 @@
 #ifndef PROJECTPART1_EXPRESSION_H
 #define PROJECTPART1_EXPRESSION_H
 
+/**
+ * Interface of expressions, which could be calculated.
+ */
 class Expression{
 public:
     virtual double calculate() = 0;

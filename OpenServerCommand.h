@@ -14,8 +14,14 @@
 using namespace std;
 
 /**
- * This command opens a server.
+ * Open server command implements command, therefore can be executed.
+ * The execution of the command opens a server with given port and hertz.
  */
+
+#define MAX_PORT 65535
+#define MIN_PORT 0
+#define INDEX_OPEN_SERVER_JUMP 3
+
 class OpenServerCommand : public Command {
     string port;
     string herz;

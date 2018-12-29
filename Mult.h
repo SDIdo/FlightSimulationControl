@@ -10,6 +10,10 @@
 
 #include "BinaryExpression.h"
 
+/**
+ * Minus is a binary expression used for multiplication between two expressions.
+ * Implements BinaryExpression.
+ */
 class Mult : public BinaryExpression {
 public:
     virtual double calculate();

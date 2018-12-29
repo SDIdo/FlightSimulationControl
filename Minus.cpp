@@ -4,6 +4,10 @@
 
 #include "Minus.h"
 
+/**
+ * This method calculates the subtraction between left and right expressions.
+ * @return double value of the operation.
+ */
 double Minus::calculate() {
     return (left->calculate() - right->calculate());
 }

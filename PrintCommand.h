@@ -8,6 +8,13 @@
 #include <iostream>
 #include "Command.h"
 
+/**
+ * Class print command implements Command, therefore could be executed.
+ * The execution of this command prints given string to the screen.
+ */
+
+#define JUMP_INDEX 2
+
 class PrintCommand : public Command {
     string printString;
 public :
@@ -17,7 +24,7 @@ public :
 
     virtual int execute() {
         cout << this->printString << endl;
-        return 2;
+        return JUMP_INDEX;
     }
 };
 

@@ -24,6 +24,10 @@
 
 using namespace std;
 
+/**
+ * Line parser iterates over a single line and creates the fitting
+ * command out of it, then it executes the command and continues.
+ */
 class LineParser {
     CommandMap commandMap;
     SymbolTable* symbolTable;

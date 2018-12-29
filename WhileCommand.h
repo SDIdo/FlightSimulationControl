@@ -7,6 +7,11 @@
 
 #include "ConditionParser.h"
 
+/**
+ * While command is a conditional command, which executes a block of commands
+ * as long as a certain condition is met.
+ * Extends ConditionParser.
+ */
 class WhileCommand : public ConditionParser {
 DataSender *dataSender;
 public:

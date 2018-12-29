@@ -7,6 +7,8 @@
 /**
  * Constructor of LineParser, used for parsing single line.
  * @param symbolTable symbol table for variables access.
+ * @param dataReaderServer data reader server for the check if in bind table.
+ * @param dataSender data sender for the execution of sending commands to the client.
  */
 LineParser::LineParser(SymbolTable *symbolTable, DataReaderServer *dataReaderServer, DataSender * newDataSender) {
     this->symbolTable = symbolTable;
@@ -15,6 +17,13 @@ LineParser::LineParser(SymbolTable *symbolTable, DataReaderServer *dataReaderSer
     this->dataSender = newDataSender;
 }
 
+/**
+ * This method parses the given strings vector and executes the matching commands
+ * by their order. The block will be of two types: If block or While block.
+ * @param stringVector vector of strings representing the commands and parameters.
+ * @param startIndex starting index for the iteration on the vector.
+ * @return int value of the jump needed in while/if commands.
+ */
 int LineParser::parse(vector<string> stringVector, int startIndex) {
     string commandString = stringVector.at(startIndex); // first string will represent the first command in line.
     Commands command = commandMap.getCommand(commandString);
@@ -81,8 +90,6 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
                 } else if (this->symbolTable->isInMap(this->dataReaderServer->getBindAddress(stringVector.at(startIndex + 1)))) {
                     printString = to_string(
                             this->symbolTable->get(this->dataReaderServer->getBindAddress(stringVector.at(startIndex + 1))));
-                } else {
-                    cout << "Var not in symbol map" << "\n";
                 }
             }
 

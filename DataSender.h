@@ -23,6 +23,13 @@
 
 using namespace std;
 
+/**
+ * This class is responsible for connection to a given IP address and port,
+ * and for sending data through it.
+ */
+
+#define JUMP_INDEX 3
+
 class DataSender {
     const char* ip;
     const char* port;

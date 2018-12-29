@@ -20,6 +20,12 @@
 #include <string.h>
 using namespace std;
 
+/**
+ * Connect command execution connects a given data sender to a given ip and port.
+ */
+
+#define JUMP_INDEX 3
+
 class ConnectCommand: public Command{ //OR command expression?
     DataSender* dataSender;
 //    SymbolTable* symbolTable;

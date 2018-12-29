@@ -17,6 +17,10 @@
 
 using namespace std;
 
+/**
+ * Data reader server is responsible for getting strobes from the client
+ * and updating bind and symbol maps (unordered maps) by the strobes received from client.
+ */
 class DataReaderServer {
     unordered_map<string,double> strobes;     //first the address then the value
     unordered_map<string, string> bindTable;  //first the address then the variable

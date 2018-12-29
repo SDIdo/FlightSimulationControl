@@ -1,6 +1,12 @@
 #include "DataReaderServer.h"
 
-
+/**
+ * This method is responsible for setting the port and speed of information reading (hertz).
+ * Also a pointer to the symbol table for both binded and unbinded variables.
+ * @param newPort number of port for the connection.
+ * @param newHerz number of times to read in second.
+ * @param symbolTablePtr pointer to symbol table.
+ */
 void DataReaderServer::set(string newPort, string newHerz, SymbolTable *symbolTablePtr) {
     port = stoi(newPort);
     herz = stoi(newHerz);
@@ -10,35 +16,67 @@ void DataReaderServer::set(string newPort, string newHerz, SymbolTable *symbolTa
 void DataReaderServer::attachThread(pthread_t newThread){
     myThread = newThread;
 }
+
+/**
+ * This method checks if a given variable name is binded.
+ * @param variableName variable name for the check.
+ * @return bool true if in map, else false.
+ */
 bool DataReaderServer::isInBindMap(string subject) {
-    cout << "[DataReaderServer] Looking through bind map\n";
     if (bindTable.find(subject) == bindTable.end()) {
-        cout << "Wasn't found!\n";
         return false;
     }
     return true;
 }
 
+/**
+ * This method sets a symbol(variable) and the fitting value in the symbol map.
+ * @param symbol variable name.
+ * @param value value of the variable.
+ */
 void DataReaderServer::setSymbol(string symbol, double value) {
     this->symbolMap->set(symbol, value);
 }
 
+/**
+ * This method return the bind address of a given variable.
+ * @param varName name of variable.
+ * @return bind address.
+ */
 string DataReaderServer::getBindAddress(string varName) {
     return bindTable.at(varName);
 }
 
+/**
+ * This method sets a variable name and the fitting address in the bind map.
+ * @param varName variable name.
+ * @param address address of the binded value.
+ */
 void DataReaderServer::setBind(string var, string address) {
     this->bindTable[var] = address;
 }
 
+/**
+ * This method sets the socket for the connection.
+ * @param newSock given socket.
+ */
 void DataReaderServer::setSock(int newSock) {
     sockfd = newSock;
 }
 
+/**
+ * This method returns the socket for the connection.
+ * @return sockfd socket of the connection.
+ */
 int DataReaderServer::getSock() {
     return sockfd;
 }
 
+/**
+ * This method updates the wanted samples (from the xml file) and updates
+ * them by the samples given from the client.
+ * @param sample sample for the operation.
+ */
 void DataReaderServer::takeSamplesToTable(string parseMe) {
     string delim = ",";
     vector<string> sol;
@@ -79,6 +117,9 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
 
 }
 
+/**
+ * This method updates the symbol table according to the strobes taken from the client.
+ */
 void DataReaderServer::updateBindedValues() {
     for (std::unordered_map<string, double>::iterator it = strobes.begin(); it != strobes.end(); ++it) {
         // if the address of the binded variable was found in strobes, symbol table is updated:
@@ -86,6 +127,10 @@ void DataReaderServer::updateBindedValues() {
     }
 }
 
+/**
+ * This method opens the socket for the connection of the client.
+ * Also creates pthread which then runs the server.
+ */
 void *DataReaderServer::open() {
     int clilen;
     struct sockaddr_in serv_addr, cli_addr;
@@ -124,16 +169,26 @@ void *DataReaderServer::open() {
         perror("ERROR on accept");
         exit(1);
     }
-    /* If connection is established then start communicating on a pthread */
-    pthread_t t1ID;
-    pthread_create(&t1ID, nullptr, runServer, this);
-    attachThread(t1ID);
+    // If connection is established then start communicating on a pthread
+    pthread_create(&this->myThread, nullptr, runServer, this);
+    attachThread(this->myThread);
 }
 
+/**
+ * This method is used by the pthread to run the opened server.
+ * @param a void pointer.
+ * @return void pointer.
+ */
 void *DataReaderServer::runServer(void *a) {
     return ((DataReaderServer *) a)->runServerFunc(a);
 }
 
+/**
+ * This method runs the server: reads information from client from
+ * the socket, and updates samples map and symbol map accordingly.
+ * @param a void pointer.
+ * @return void pointer.
+ */
 void *DataReaderServer::runServerFunc(void *a) {
     int index = 0;
     int n = 0;
@@ -146,8 +201,8 @@ void *DataReaderServer::runServerFunc(void *a) {
 
         n = read(this->newSockFd, buffer, 255);
         if (n < 0) {
-            perror("ERROR reading from socket");
-            exit(1);
+            this->closeServer();
+            pthread_exit(a);
         }
         information = string(buffer);
 
@@ -176,6 +231,9 @@ void *DataReaderServer::runServerFunc(void *a) {
     }
 }
 
+/**
+ * This method closes the reader server.
+ */
 void DataReaderServer::closeServer() {
     pthread_join(myThread, nullptr);
     close(sockfd);      //SCAT no close but hightly needed!

@@ -11,6 +11,8 @@
 /**
  * Constructor of BlockParser, used for parsing blocks of strings.
  * @param symbolTable symbol table for variables access.
+ * @param dataReaderServer data reader server for access to the bind map.
+ * @param dataSender data sender for sending data through commands.
  */
 BlockParser::BlockParser(SymbolTable *symbolTable, DataReaderServer *dataReaderServer, DataSender* newDataSender) {
     this->symbolTable = symbolTable;
@@ -19,6 +21,11 @@ BlockParser::BlockParser(SymbolTable *symbolTable, DataReaderServer *dataReaderS
     this->util.set(this->symbolTable, this->dataReaderServer);
 }
 
+/**
+ * This method parses the given strings vector and executes the matching commands
+ * by their order. The block will be of two types: If block or While block.
+ * @param stringVector vector of strings representing the commands and parameters.
+ */
 void BlockParser::parse(vector<string> stringVector) {
     string condition, exp1String, exp2String;
     vector<string> valueVector1, valueVector2;
@@ -31,7 +38,7 @@ void BlockParser::parse(vector<string> stringVector) {
     exp1String = stringVector.at(1);
     exp2String = stringVector.at(3);
 
-    // NEED TO DELETE BEGININNG OF VECTOR ("if", conditionals... )
+    // erase the beginning of the vector.
     stringVector.erase(stringVector.begin());
     stringVector.erase(stringVector.begin());
     stringVector.erase(stringVector.begin());
@@ -52,7 +59,7 @@ void BlockParser::parse(vector<string> stringVector) {
             whileCommand.execute();
             break;
         }
-
+        // if the command was not valid.
         default:
             throw "Non valid command";
     }

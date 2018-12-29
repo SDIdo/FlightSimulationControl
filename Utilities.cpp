@@ -9,6 +9,9 @@
 #include "Minus.h"
 #include "Number.h"
 
+/**
+ * Constructor of Utilities object. Initializes the operators map.
+ */
 Utilities::Utilities() {
     operators["+"] = new Plus();
     operators["-"] = new Minus();
@@ -16,18 +19,31 @@ Utilities::Utilities() {
     operators["/"] = new Div();
 }
 
+/**
+ * Destructor of the Utilities.
+ */
 Utilities::~Utilities(){
     for (std::unordered_map<string,BinaryExpression*>::iterator it=operators.begin(); it!=operators.end(); ++it) {
         delete(it->second);
     }
 }
 
+/**
+ * This method sets the symbol table of the utilities object in order to get
+ * values for calculations with symbols.
+ * @param newSymbols given symbol table pointer.
+ */
 void Utilities::set(SymbolTable *newSymbols, DataReaderServer * newDataServer) {
     symbols = newSymbols;
     dataServer = newDataServer;
 }
 
-
+/**
+ * This method is the operation Shunting Yard, which, given a vector of
+ * strings, calculates the double value of it and returns it as a string.
+ * @param instream vector of strings (could be variables, operators or expressions).
+ * @return string represenation of the value from the calculation.
+ */
 string Utilities::shuntingYard(vector<string> instream) {
     stack<string> operationStack;
     queue<string> outPutQueue;
@@ -106,6 +122,13 @@ string Utilities::shuntingYard(vector<string> instream) {
     return operationStack.top();
 }
 
+/**
+ * This method receives an operator represented by a string
+ * and returns the mathematical precedence of it.
+ * Mult and Div operators will be first and Plus Minus will be last.
+ * @param currentOper operator for the check.
+ * @return precedence of the operator.
+ */
 int Utilities::precedence(string currentOper) {
     if (currentOper == "+" || currentOper == "-") {
         return 0;

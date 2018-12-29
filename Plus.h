@@ -13,6 +13,10 @@
 
 using namespace std;
 
+/**
+ * Plus is a binary expression used for addition between two expressions.
+ * Implements BinaryExpression.
+ */
 class Plus : public BinaryExpression{
 public:
     virtual double calculate();

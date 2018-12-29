@@ -12,13 +12,17 @@
 
 using namespace std;
 
+/**
+ * This class is responsible for the storage of the variables which have
+ * assigned (double) values, both binded variables and local variables.
+ */
 class SymbolTable {
     unordered_map<string, double> symbols;
     mutex m;
 
 public:
     /**
-     * This function checks if a given symbol string is valid in
+     * This method checks if a given symbol string is valid in
      * symbol map, and returns the fitting double value.
      * @param symbolString given string to search in map.
      * @return double value of the given string.
@@ -28,6 +32,11 @@ public:
         return symbols.at(symbolString);
     }
 
+    /**
+     * This method checks if a variable is in the map and returns the answer.
+     * @param varName variable name for the check.
+     * @return true if in map, else false.
+     */
     bool isInMap(string varName) {
         lock_guard<mutex> guard(this->m);
         for (unordered_map<string, double>::iterator it = symbols.begin(); it != symbols.end(); ++it) {
@@ -39,7 +48,7 @@ public:
     }
 
     /**
-     * This function sets given symbol and value to the symbol map.
+     * This method sets given symbol and value to the symbol map.
      * @param symbolString string of the given symbol.
      * @param symbolValue value of the symbol.
      */

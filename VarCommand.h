@@ -10,6 +10,15 @@
 #include "Utilities.h"
 #include "SmallLexer.h"
 
+/**
+ * VarCommand implements Command, therefore could be executed.
+ * The execution of the command will create a new variable and
+ * update the relevant maps.
+ */
+
+#define BINDED_JUMP_INDEX 5
+#define UNBINDED_JUMP_INDEX 4
+
 class VarCommand : public Command {
     string equalSign, valueString, pathString, varName;
     DataReaderServer *dataReaderServer;

@@ -13,6 +13,10 @@
 
 using namespace std;
 
+/**
+ * Number holds a double value.
+ * Implements Expression, therefore could be calculated and return the value.
+ */
 class Number : public Expression {
     double value;
 public:

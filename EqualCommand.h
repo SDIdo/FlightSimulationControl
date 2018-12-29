@@ -12,6 +12,17 @@
 #include "Utilities.h"
 #include "SmallLexer.h"
 
+/**
+ * This command is the "assign" command which receives a variable and
+ * a value (represented by an expression or variables), and puts the calculated
+ * value in fitting symbol with the symbol map.
+ */
+
+#define EQUAL_COMMAND_JUMP 3
+#define SECOND_CHAR 1
+#define LAST_CHAR 2
+#define BUFFER_SIZE 256
+
 class EqualCommand : public Command {
     string expressionString, varName;
     DataReaderServer *dataReaderServer;

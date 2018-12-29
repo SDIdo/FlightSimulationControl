@@ -8,6 +8,14 @@
 #include<unistd.h>
 #include "Command.h"
 
+/**
+ * Sleep command implements Command, therefore could be executed.
+ * The execution will be sleeping the given amount of time in milliseconds.
+ */
+
+#define JUMP_SLEEP_INDEX 2
+#define DIVISION_MILLISECOND 1000
+
 class SleepCommand : public Command {
     double sleepTime;
 public :
@@ -16,8 +24,8 @@ public :
     }
 
     virtual int execute() {
-        usleep(this->sleepTime);
-        return 2;
+        sleep(this->sleepTime / DIVISION_MILLISECOND);
+        return JUMP_SLEEP_INDEX;
     }
 };
 
