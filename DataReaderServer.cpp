@@ -24,12 +24,10 @@ void DataReaderServer::setSymbol(string symbol, double value) {
 }
 
 string DataReaderServer::getBindAddress(string varName) {
-    cout << "[DataReader] Looking for a bind address for: " << varName << "\n";
     return bindTable.at(varName);
 }
 
 void DataReaderServer::setBind(string var, string address) {
-//    cout << "New var is binded as such: " << var << " = " << address << "\n";
     this->bindTable[var] = address;
 }
 
@@ -82,14 +80,11 @@ void DataReaderServer::takeSamplesToTable(string parseMe) {
 }
 
 void DataReaderServer::updateBindedValues() {
-//    cout << "size of bind table is " << bindTable.size() << endl;
     for (std::unordered_map<string, double>::iterator it = strobes.begin(); it != strobes.end(); ++it) {
 
 
         // if the address of the binded variable was found in strobes, symbol table is updated:
         this->setSymbol(it->first, it->second);
-//            cout << "Ok! there's a bineded value! Update it's symbolTable\n which is: " << it->first << endl;
-
     }
 }
 
@@ -125,10 +120,8 @@ void *DataReaderServer::open() {
 
     listen(getSock(), 5);
     clilen = sizeof(cli_addr);
-    printf("Waiting for the for the simulator client\n");
     /* Accept actual connection from the client */
     this->newSockFd = accept(getSock(), (struct sockaddr *) &cli_addr, (socklen_t *) &clilen);
-    printf("socket was created!\n");
     if (this->newSockFd < 0) {
         perror("ERROR on accept");
         exit(1);
@@ -178,8 +171,7 @@ void *DataReaderServer::runServerFunc(void *a) {
         }
 
         if (isDataEnd) {
-//            cout << "Information from simulator: " << remainder.length() << "and the data: " << remainder << "\n";
-            takeSamplesToTable(remainder);   //receive and update local map.
+            takeSamplesToTable(remainder);
             updateBindedValues();
             remainder = "";
             isDataEnd = false;

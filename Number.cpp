@@ -10,7 +10,6 @@ using namespace std;
 
 Number::Number(string newValue) {
     value = stod(newValue);
-    cout << "[Number] value is now: " << value << "\n";
 }
 
 double Number::calculate() {

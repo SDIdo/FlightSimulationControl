@@ -18,13 +18,10 @@ OpenServerCommand::OpenServerCommand(string newPort, string newHerz,
 int OpenServerCommand::execute() {
     // check if valid port.
     if (stod(port) < 0 || stod(port) > 65535) {
-        cout << "non-valid port" << endl;
-        return 0;
+        throw "non-valid port";
     }
-    cout << "[Opening a server] We are here" << "\n";
 
     dataReaderServer->set(port, herz, this->symbolTable);
-    cout << "[Opening a server] Done initializing\n";
 
     dataReaderServer->open();
 

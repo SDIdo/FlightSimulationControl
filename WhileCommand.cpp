@@ -21,12 +21,10 @@ int WhileCommand::execute() {
     int i = 0;
     // if the condition is not met, return from the function.
     if (!this->conditionIsMet()) {
-        cout << "TOO BAD condition was NOT met!:  " + this->exp1String + condition + this->exp2String << endl;
         return 0;
     }
     // else, while condition is met, the method executes each command:
     while (this->conditionIsMet()) {
-        cout << "condition was met!:  " + this->exp1String + condition + this->exp2String << endl;
         int i = 0;
         int commandLength;
         LineParser lineParser(this->symbolTablePtr, this->dataReaderServer, this->dataSender);

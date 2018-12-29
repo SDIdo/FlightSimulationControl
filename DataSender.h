@@ -24,7 +24,6 @@
 using namespace std;
 
 class DataSender {
-    char buffer[256];
     const char* ip;
     const char* port;
     int sockfd;

@@ -193,7 +193,6 @@ int main(int argc, char *argv[]) {
     ifstream myFile(argv[1]);
     if (argc == 2) {
 //        ifstream myFile(argv[1]);
-        cout << argv[1] << endl;
         if (myFile.is_open()) {
             fromFile = true;
         }
@@ -239,14 +238,7 @@ int main(int argc, char *argv[]) {
                 }
                 blockString += " " + userInput;
             }
-
-            cout << "user line input is :" << blockString << endl;
             vector<string> lexedVec1 = bl.lexer(blockString);
-            cout << "Lexed is:\n";
-            for (int i = 0; i < lexedVec1.size(); i++) {
-                cout << lexedVec1.at(i) << ", ";
-            }
-            cout << "\n";
 
             stringVector = bl.lexer(blockString);
             blockParser.parse(stringVector);
@@ -255,11 +247,6 @@ int main(int argc, char *argv[]) {
         else {
             cout << "user *Line Command input* is :" << userInput << endl;
             vector<string> lexedVec = bl.lexer(userInput);
-            cout << "Lexed is:\n";
-            for (int i = 0; i < lexedVec.size(); i++) {
-                cout << lexedVec.at(i) << ", ";
-            }
-            cout << "\n";
             lineParser.parse(bl.lexer(userInput), 0);
         }
     }

@@ -25,7 +25,6 @@ public:
      */
     double get(string symbolString) {
         lock_guard<mutex> guard(this->m);
-        cout << "[SymbolTable] looking for " << symbolString << " in the map\n";
         return symbols.at(symbolString);
     }
 
