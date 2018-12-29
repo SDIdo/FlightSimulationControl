@@ -8,11 +8,18 @@
 
 using namespace std;
 
+/**
+ * Constructor of a number. receives the value string and saves the value as double.
+ * @param newValue
+ */
 Number::Number(string newValue) {
     value = stod(newValue);
-    cout << "[Number] value is now: " << value << "\n";
 }
 
+/**
+ * This method returns the value of the number.
+ * @return double value of the number.
+ */
 double Number::calculate() {
     return value;
 }

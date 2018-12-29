@@ -7,6 +7,10 @@
 
 #include "Lexer.h"
 
+/**
+ * Small lexer implements Lexer, therefore it can iterate through a string
+ * and create string vector. This lexer will be used for the Shunting Yard operation.
+ */
 class SmallLexer : public Lexer {
     bool isOperator(char c);
 public:

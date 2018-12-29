@@ -8,6 +8,11 @@
 
 #include "ConditionParser.h"
 
+/**
+ * If command is a conditional command, which executes a block of commands if
+ * a certain condition is met.
+ * Extends ConditionParser.
+ */
 class IfCommand : public ConditionParser {
 DataSender *dataSender;
 public:

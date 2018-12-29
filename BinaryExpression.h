@@ -10,6 +10,10 @@
 
 #include "Expression.h"
 
+/**
+ * Binary expressions is any type of binary operation which could hold two
+ * autonomous expressions, and make calculations with them.
+ */
 class BinaryExpression : public Expression{
 public:
     Expression* left;

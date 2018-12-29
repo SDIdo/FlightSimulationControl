@@ -9,6 +9,9 @@
 #include "Minus.h"
 #include "Number.h"
 
+/**
+ * Constructor of Utilities object. Initializes the operators map.
+ */
 Utilities::Utilities() {
     operators["+"] = new Plus();
     operators["-"] = new Minus();
@@ -16,23 +19,32 @@ Utilities::Utilities() {
     operators["/"] = new Div();
 }
 
+/**
+ * Destructor of the Utilities.
+ */
 Utilities::~Utilities(){
     for (std::unordered_map<string,BinaryExpression*>::iterator it=operators.begin(); it!=operators.end(); ++it) {
         delete(it->second);
     }
 }
 
+/**
+ * This method sets the symbol table of the utilities object in order to get
+ * values for calculations with symbols.
+ * @param newSymbols given symbol table pointer.
+ */
 void Utilities::set(SymbolTable *newSymbols, DataReaderServer * newDataServer) {
     symbols = newSymbols;
     dataServer = newDataServer;
 }
 
-
+/**
+ * This method is the operation Shunting Yard, which, given a vector of
+ * strings, calculates the double value of it and returns it as a string.
+ * @param instream vector of strings (could be variables, operators or expressions).
+ * @return string represenation of the value from the calculation.
+ */
 string Utilities::shuntingYard(vector<string> instream) {
-    cout << "[ShuntingYard] Hello and welcome to shuntingYard with: \n";
-    for (string s : instream){
-        cout << s << ", ";
-    }
     stack<string> operationStack;
     queue<string> outPutQueue;
     string left;
@@ -60,48 +72,36 @@ string Utilities::shuntingYard(vector<string> instream) {
             operationStack.pop();
             //number situation
         } else if (isdigit((*it).at(0))) {
-            cout << "[SuntingYard] yeah that's a number: " << *it << "\n";
             operators.erase(*it);
 
             outPutQueue.push(*it);
             //variable situation
         } else if (this->dataServer->isInBindMap(*it)){
             string address = this->dataServer->getBindAddress(*it);
-            cout << "[ShuntingYard] That's a global variable get it from the symbolTable: " << *it << "\n";
-            cout << "[ShuntingYardSmart] get it's address: " << address << "\n";
             double value = this->symbols->get(address);
-            cout << "[ShuntingYardSmart] get it's value: " << value << "\n";
             outPutQueue.push(to_string(value));
-            cout << "[ShuntingYardSmart] Got it from the symbolTable " << outPutQueue.back() << "\n";
         }
         else {
-            cout << "this has to be a local var or we are going to crash\n";
             outPutQueue.push(to_string(symbols->get(*it)));
-            cout << "[ShuntingYard] Got it from the symbolTable " << outPutQueue.back() << "\n";
         }
     }
 
     //Second Stage//
     while (!operationStack.empty()) {
-        cout << "[Shunting Yard ]Whats being transfered? : " << operationStack.top() << "\n";
         outPutQueue.push(operationStack.top());
         operationStack.pop();
     }
 
     while (!outPutQueue.empty()) {
-        std::cout << "[Shunting Yard ] show what's on queue " << outPutQueue.front() << std::endl;
         string token = outPutQueue.front();
         outPutQueue.pop();
         int i = 0;
         if (token != "-" && token.at(0) == '-'){
-            cout << "Ohhh! that's a negative number!\n";
             i = 1;
         }
         if (isdigit(token.at(i))) {     //SCAT!
-            cout << "[ShuntingYard] It is a digit " << token.at(0) << "\n";
             operationStack.push(token);
         } else {
-            cout << "This should be the right element: " << operationStack.top() << "\n";
             string right = operationStack.top();
 
             operationStack.pop();
@@ -119,10 +119,16 @@ string Utilities::shuntingYard(vector<string> instream) {
             operationStack.push(sol);
         }
     }
-    cout << "From the factory of shunting yard::: " << operationStack.top() << endl;
     return operationStack.top();
 }
 
+/**
+ * This method receives an operator represented by a string
+ * and returns the mathematical precedence of it.
+ * Mult and Div operators will be first and Plus Minus will be last.
+ * @param currentOper operator for the check.
+ * @return precedence of the operator.
+ */
 int Utilities::precedence(string currentOper) {
     if (currentOper == "+" || currentOper == "-") {
         return 0;

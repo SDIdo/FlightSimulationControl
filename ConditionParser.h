@@ -13,6 +13,10 @@
 #include "DataReaderServer.h"
 #include "DataSender.h"
 
+/**
+ * Abstract class for conditional commands like "if" and "while",
+ * which needs to be executed as a block of commands, restricted by a condition.
+ */
 class ConditionParser : public Command {
     SmallLexer smallLexer;
 public:

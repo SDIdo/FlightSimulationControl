@@ -9,9 +9,11 @@
 #include <unordered_map>
 using namespace std;
 
+// enum for valid commands.
 enum Commands {InValid, OpenDataServer, Connect, Var, Bind, Equal, While, If, Print, Sleep};
 
 class CommandMap {
+    // initialize the map of the commands.
     unordered_map<string,Commands> commands = {{"openDataServer" ,OpenDataServer}, {"connect" ,Connect},
                                  {"var" ,Var}, {"bind" ,Bind}, {"=" ,Equal}, {"while" ,While},
                                  {"sleep" ,Sleep}, {"if" ,If}, {"print" ,Print}};

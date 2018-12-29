@@ -4,38 +4,45 @@
 
 #include "DataSender.h"
 
-void DataSender::set(string newIp, string newPort) { //staticate for now.. but should be a vector..
+/**
+ * This method sets the IP and port of the data sender object for the connection.
+ * @param newIp ip for the connection.
+ * @param newPort port for the connection.
+ */
+void DataSender::set(string newIp, string newPort) {
     ip = newIp.c_str();
     port = newPort.c_str();
 }
 
+/**
+ * This method sets the sock for the connection.
+ * @param newSock sock for the connection.
+ */
 void DataSender::setSock(int newSock) {
     sockfd = newSock;
 }
 
+/**
+ * This method returns the sock for the connection.
+ * @return newSock sock for the connection.
+ */
 int DataSender::getSock() {
     return sockfd;
 }
 
+/**
+ * This method opens the pipe for the connection for the user
+ * to be able to send data.
+ * @return int number of jumps in lexer.
+ */
 int DataSender::openPipe() {
-    cout << "[open pipe properties] ip = " << ip << " and port = " << port << "\n";
     int portno;
     struct sockaddr_in serv_addr;
     struct hostent *server;
-    //
-    //    char buffer[256];
-    //
-    //    if (argc < 3) {
-    //        fprintf(stderr, "usage %s hostname port\n", argv[0]);
-    //        exit(0);
-    //    }
-
     portno = atoi(port);
 
     /* Create a socket point */
     setSock(socket(AF_INET, SOCK_STREAM, 0));
-
-    printf("[From Connection] sockfd is %d\n", getSock());
 
     if (getSock() < 0) {
         perror("ERROR opening socket");
@@ -59,22 +66,24 @@ int DataSender::openPipe() {
         perror("ERROR connecting");
         exit(1);
     }
-    return 3; //num of moves in the lexer
+    return JUMP_DATA_SENDER_INDEX; //num of moves in the lexer
 }
 
+/**
+ * This method is used for sending commands from the user to the socket.
+ * @param buffer command to be sent to the socket.
+ */
 void DataSender::sendCommand(const char buffer[256]) {
 
     /* Now ask for a message from the user, this message
      * will be read by server
      */
-    printf("Currently sockfd is set to %d\n", getSock());
     char myBuffer[256];
     bzero(myBuffer, 256);
     memcpy(myBuffer, buffer, 256);
     int n = 0;
     char setString[256] = {'s', 'e', 't', ' '};
     strcat(setString, myBuffer);
-    printf("Current msg to send: %s\n", setString);
     strcat(setString, "\r\n");
 
     /* Send message to the server */
@@ -93,10 +102,11 @@ void DataSender::sendCommand(const char buffer[256]) {
         perror("ERROR reading from socket");
         exit(1);
     }
-
-    printf("That was sent: %s\n", myBuffer);
 }
 
+/**
+ * This method is used for closing the communication socket.
+ */
 void DataSender::closePipe(){
     close(sockfd);
 }

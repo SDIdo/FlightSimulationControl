@@ -7,6 +7,8 @@
 /**
  * Constructor of LineParser, used for parsing single line.
  * @param symbolTable symbol table for variables access.
+ * @param dataReaderServer data reader server for the check if in bind table.
+ * @param dataSender data sender for the execution of sending commands to the client.
  */
 LineParser::LineParser(SymbolTable *symbolTable, DataReaderServer *dataReaderServer, DataSender * newDataSender) {
     this->symbolTable = symbolTable;
@@ -15,10 +17,15 @@ LineParser::LineParser(SymbolTable *symbolTable, DataReaderServer *dataReaderSer
     this->dataSender = newDataSender;
 }
 
+/**
+ * This method parses the given strings vector and executes the matching commands
+ * by their order. The block will be of two types: If block or While block.
+ * @param stringVector vector of strings representing the commands and parameters.
+ * @param startIndex starting index for the iteration on the vector.
+ * @return int value of the jump needed in while/if commands.
+ */
 int LineParser::parse(vector<string> stringVector, int startIndex) {
-    cout << "[$ LineParser $] sockfd is : " <<  this->dataSender->getSock() << "\n";
     string commandString = stringVector.at(startIndex); // first string will represent the first command in line.
-    cout << "#@#line Parser with command: " << stringVector.at(startIndex) << " at start index :" << startIndex <<"\n";
     Commands command = commandMap.getCommand(commandString);
     if (stringVector.at(startIndex + 1) == "=") {
         command = Equal;
@@ -28,17 +35,14 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
     // for each command option - execute the fitting operation:
     switch (command) {
         case OpenDataServer : {
-            cout << "[$ LineParser_openData $] sockfd is : " <<  this->dataSender->getSock() << "\n";
             string port = util.shuntingYard(smallLexer.lexer(stringVector.at(startIndex + 1)));
             string herz = util.shuntingYard(smallLexer.lexer(stringVector.at(startIndex + 2)));
             OpenServerCommand openServer(port, herz, this->dataReaderServer, this->symbolTable);
-//            cout << "So let's see what's about to be opened " << port << ", " << herz << "\n";
             indexJumpValue = openServer.execute();
             break;
         }
 
         case Connect : {
-//            cout << "[$ LineParser_Connect $] sockfd is : " <<  this->dataSender->getSock() << "\n";
             ConnectCommand connect(stringVector.at(startIndex + 1), util.shuntingYard(smallLexer.lexer(stringVector.at(startIndex + 2))),
                                    this->dataSender);
             indexJumpValue = connect.execute();
@@ -46,7 +50,6 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
         }
 
         case Var : {
-            cout << "[$ LineParser_Var $] sockfd is : " <<  this->dataSender->getSock() << "\n";
             if (stringVector.size() == 5) {
                 VarCommand varCommand(this->dataReaderServer, this->symbolTable, stringVector.at(startIndex + 1),
                                       stringVector.at(startIndex + 2), stringVector.at(startIndex + 3), stringVector.at(startIndex + 4));
@@ -60,8 +63,6 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
         }
 
         case Equal : {
-            cout << "[Equal from outside] Here in equal command with " << stringVector.at(startIndex) << stringVector.at(startIndex + 1) << stringVector.at(startIndex + 2) << "\n";
-            cout << "[Equal from outside] And client sockfd is " << this->dataSender->getSock() << "\n";
             EqualCommand equalCommand(this->dataReaderServer, this->dataSender, stringVector.at(startIndex),
                                       stringVector.at(startIndex + 2), this->symbolTable);
             indexJumpValue = equalCommand.execute();
@@ -69,7 +70,6 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
         }
 
         case Print : {
-            cout << "[$ LineParser_Print $] sockfd is : " <<  this->dataSender->getSock() << "\n";
             string printString;
             // if the next string starts with quotes - string will be the string inside quotes.
             if (stringVector.at(startIndex + 1).at(0) == '"') {
@@ -80,7 +80,6 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
 
             else if (stringVector.at(startIndex + 1).at(0) == '-' || stringVector.at(startIndex + 1).at(0) == '(' ||
                      isdigit(stringVector.at(startIndex + 1).at(0))) {
-                cout << "Detected a math operation to print\n";
                 printString = util.shuntingYard(smallLexer.lexer(stringVector.at(startIndex + 1)));
             }
             else {
@@ -91,8 +90,6 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
                 } else if (this->symbolTable->isInMap(this->dataReaderServer->getBindAddress(stringVector.at(startIndex + 1)))) {
                     printString = to_string(
                             this->symbolTable->get(this->dataReaderServer->getBindAddress(stringVector.at(startIndex + 1))));
-                } else {
-                    cout << "Var not in symbol map" << "\n";
                 }
             }
 
@@ -102,7 +99,6 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
         }
 
         case Sleep : {
-            cout << "[$ LineParser_Sleep $] sockfd is : " <<  this->dataSender->getSock() << "\n";
             // sleeps for the given amount of time.
             vector<string> stringExp = this->smallLexer.lexer(stringVector.at(startIndex + 1));
             SleepCommand sleepCommand(stod(this->util.shuntingYard(stringExp)));
@@ -110,12 +106,9 @@ int LineParser::parse(vector<string> stringVector, int startIndex) {
             break;
         }
 
-            // if the command is invalid command, print error message.
+            // if the command is invalid command, throw.
         default:
-            cout << "[$ LineParser_No Such $] sockfd is : " <<  this->dataSender->getSock() << "\n";
-            cout << "command is" << stringVector.at(startIndex + 1) << endl;
-            sleep(100);
-            cout << "No such Command\n";
+            throw "No such Command";
     }
 
     return indexJumpValue;

@@ -15,12 +15,15 @@
 #include "DataReaderServer.h"
 #include "DataSender.h"
 
+/**
+ * This class is responsible for parsing blocks of script code.
+ * A block parser can parse a given string vector and make commands which could execute.
+ */
 class BlockParser {
     CommandMap commandMap;
     SymbolTable *symbolTable;
     DataReaderServer *dataReaderServer;
     DataSender *dataSender;
-    SmallLexer smallLexer;
     Utilities util;
 public:
     void parse(vector<string> stringVector);

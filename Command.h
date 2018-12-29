@@ -10,8 +10,10 @@
 using namespace std;
 
 
+/**
+ * Interface of executable commands.
+ */
 class Command {
-
 public:
     virtual int execute() = 0;
 };

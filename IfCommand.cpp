@@ -5,6 +5,16 @@
 #include "IfCommand.h"
 #include "LineParser.h"
 
+/**
+ * Constructor of if command.
+ * @param commandStringVector vector of the strings representing the commands in the if block.
+ * @param exp1String first expression, represented as a string.
+ * @param exp2String second expression, represented as a string.
+ * @param condition condition for the execution of the block, represented as a string.
+ * @param symbolTablePtr symbol table of the values.
+ * @param dataReaderServer data reader server for the check in bind map.
+ * @param dataSender data sender for the execution of assigning commands.
+ */
 IfCommand::IfCommand(vector<string> commandStringVector, string exp1String, string exp2String,
         string condition, SymbolTable *symbolTablePtr, DataReaderServer *dataReaderServer, DataSender * newDataSender){
     this->commandStringVector = commandStringVector;
@@ -17,6 +27,11 @@ IfCommand::IfCommand(vector<string> commandStringVector, string exp1String, stri
     this->util.set(this->symbolTablePtr,this->dataReaderServer);
 }
 
+/**
+ * This method checks if the condition is met. If it does - it executes
+ * each line given by the client.
+ * @return jump for the lexer.
+ */
 int IfCommand::execute() {
     // if the condition is not met, return from the function.
     if (!this->conditionIsMet()) {

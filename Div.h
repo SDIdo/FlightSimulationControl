@@ -10,6 +10,10 @@
 
 #include "BinaryExpression.h"
 
+/**
+ * Div is a binary expression used for division between two expressions.
+ * Implements BinaryExpression.
+ */
 class Div : public BinaryExpression {
 public:
     virtual double calculate();
