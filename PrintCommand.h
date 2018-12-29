@@ -13,7 +13,7 @@
  * The execution of this command prints given string to the screen.
  */
 
-#define JUMP_INDEX 2
+#define JUMP_PRINT_INDEX 2
 
 class PrintCommand : public Command {
     string printString;
@@ -24,7 +24,7 @@ public :
 
     virtual int execute() {
         cout << this->printString << endl;
-        return JUMP_INDEX;
+        return JUMP_PRINT_INDEX;
     }
 };
 

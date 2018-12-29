@@ -26,5 +26,5 @@ ConnectCommand::ConnectCommand(string newIp, string newPort, DataSender *newData
 int ConnectCommand::execute() {
     dataSender->set(ip, port);
     dataSender->openPipe(); //SCAT for now
-    return JUMP_INDEX; //moves the lexer to next content
+    return JUMP_CONNECT_INDEX; //moves the lexer to next content
 }

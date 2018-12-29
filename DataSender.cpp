@@ -66,7 +66,7 @@ int DataSender::openPipe() {
         perror("ERROR connecting");
         exit(1);
     }
-    return JUMP_INDEX; //num of moves in the lexer
+    return JUMP_DATA_SENDER_INDEX; //num of moves in the lexer
 }
 
 /**

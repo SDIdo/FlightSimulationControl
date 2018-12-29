@@ -28,7 +28,7 @@ using namespace std;
  * and for sending data through it.
  */
 
-#define JUMP_INDEX 3
+#define JUMP_DATA_SENDER_INDEX 3
 
 class DataSender {
     const char* ip;
