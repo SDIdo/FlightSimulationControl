@@ -35,15 +35,10 @@ send a message to the simulation to move the aileron in the plane.
 Our goal is to automate a take off so we write the following script:
 
   ``while alt < 1000 {
-  
   rudder = (h-heading)/80
-  
   aileron = - roll/70
-  
   elevator = pitch / 50
-  
   sleep 250
-  
   }``
 
 
