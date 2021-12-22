@@ -1,5 +1,5 @@
 # Flight Simulation Control
-<img src="images/cesna.png">
+<img src="images/cesna.png" height=200>
 
 #### Developers: SDido and RoyzLevy
 
@@ -30,12 +30,13 @@ i.e.
 When our variable changes programmatically it will 
 send a message to the simulation to move the aileron in the plane.
 Our goal is to automate a take off so we write the following script:
-  while alt < 1000 {
+
+  ``while alt < 1000 {
   rudder = (h-heading)/80
   aileron = - roll/70
   elevator = pitch / 50
   sleep 250
-  }
+  }``
 
 Look at <a href="https://github.com/SDIdo/FlightSimulation/blob/master/flight.txt">flight.txt</a> in this repo for the full script.
 
