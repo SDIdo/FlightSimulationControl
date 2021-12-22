@@ -13,7 +13,7 @@ III. Run a.out [legit script file that follow our rules] (i.e. `a.out flight.txt
 IV. Enjot the take off and autonomous flight!
 
 ## Introduction
-<a href="https://www.flightgear.org/">Fight Gear</a> is a cross platform free flight simulator written in C and C++.
+<a href="https://www.flightgear.org/">Fight Gear</a> is a free cross platform flight simulator written in C and C++.
 
 Flight Gear allows telnet connection via termnial or shell thus
 
