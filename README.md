@@ -34,7 +34,7 @@ When our variable changes programmatically it will
 send a message to the simulation to move the aileron in the plane.
 Our goal is to automate a take off so we write the following script:
 
-  ```while alt < 1000 {
+  ``while alt < 1000 {
   
   rudder = (h-heading)/80
   
@@ -44,7 +44,7 @@ Our goal is to automate a take off so we write the following script:
   
   sleep 250
   
-  }```
+  }``
 
 Look at <a href="https://github.com/SDIdo/FlightSimulation/blob/master/flight.txt">flight.txt</a> in this repo for the full script.
 
