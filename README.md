@@ -4,10 +4,13 @@
 #### Developers: SDido and RoyzLevy
 
 ## How to Run
-Make sure you have Flight Gear installed.
-look for a.out (or create one with g++ *.cpp *.h -std=c++14 -pthread)
-Run a.out flight.txt (or any other legit script file that follow our rules)
-Enjot the take off and autonomous flight!
+I. Make sure you have Flight Gear installed.
+
+II. look for a.out (or create one with g++ *.cpp *.h -std=c++14 -pthread)
+
+III. Run a.out flight.txt (or any other legit script file that follow our rules)
+
+IV. Enjot the take off and autonomous flight!
 
 ## Introduction
 <a href="https://www.flightgear.org/">Fight Gear</a> is a cross platform free flight simulator written in C and C++.
