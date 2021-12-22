@@ -3,6 +3,12 @@
 
 #### Developers: SDido and RoyzLevy
 
+## How to Run
+Make sure you have Flight Gear installed.
+look for a.out (or create one with g++ *.cpp *.h -std=c++14 -pthread)
+Run a.out flight.txt (or any other legit script file that follow our rules)
+Enjot the take off and autonomous flight!
+
 ## Introduction
 <a href="https://www.flightgear.org/">Fight Gear</a> is a cross platform free flight simulator written in C and C++.
 Flight Gear allows telnet connection via termnial or shell thus
@@ -41,4 +47,5 @@ This in order to give commands and also analyze and be notified about
 the plane's condition and it's surroundings.
 The connection had to be TCP because we care for the order and precision 
 of the commands. 
+
 
