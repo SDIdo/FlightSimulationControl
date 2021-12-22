@@ -46,7 +46,6 @@ Our goal is to automate a take off so we write the following script:
   
   }``
 
-<img src="images/cesna3.png">
 
 Look at <a href="https://github.com/SDIdo/FlightSimulation/blob/master/flight.txt">flight.txt</a> in this repo for the full script.
 
@@ -62,4 +61,4 @@ the plane's condition and it's surroundings.
 The connection had to be TCP because we care for the order and precision 
 of the commands. 
 
-
+<img src="images/cesna3.png">
