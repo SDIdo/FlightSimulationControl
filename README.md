@@ -8,16 +8,19 @@ I. Make sure you have <a href="https://sourceforge.net/projects/flightgear/">Fli
 
 II. Download <a href="https://github.com/SDIdo/FlightSimulation/blob/master/a.out">a.out</a>
 
-III. Run a.out [legit script file that follow our rules] (i.e. a.out flight.txt)
+III. Run a.out [legit script file that follow our rules] (i.e. `a.out flight.txt`)
 
 IV. Enjot the take off and autonomous flight!
 
 ## Introduction
 <a href="https://www.flightgear.org/">Fight Gear</a> is a cross platform free flight simulator written in C and C++.
+
 Flight Gear allows telnet connection via termnial or shell thus
+
 in this project we have established an autopilot feature for Flight Gear.
 
 By writing a file with flight commands and conditions written in a script format 
+
 our program can then take this file to translate and communicate it to Flight Gear.
 
 This project was delegated to communication part and the language part.
